@@ -1,0 +1,7 @@
+.ansible
+.DS_Store
+**.DS_Store
+**/ansible.cfg
+**/*.gz
+**/*.log
+**/*.keep
