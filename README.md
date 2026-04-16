@@ -1,15 +1,31 @@
 # Ansible Collection - itential.monitoring
 
-The playbooks and roles discussed in this guide install and configure
-[Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/) and a set of metrics
-exporters that can be used to help monitor the Itential platform. Prometheus and Grafana can be
-installed on separate hosts or can be co-located together. They should not be co-located with the
-other Itential-related hosts. The exporters will be installed on the Itential-related hosts where
-they are exposing metrics. For example, the MongoDB exporter will be installed on the `mongodb`
-hosts.
+The playbooks and roles discussed in this guide install and configure two independent monitoring
+stacks for the Itential platform:
+
+- **Prometheus / Grafana** — installs [Prometheus](https://prometheus.io/),
+  [Grafana](https://grafana.com/), and a set of metrics exporters. Prometheus and Grafana can be
+  installed on separate hosts or co-located together, but should not be co-located with
+  Itential-related hosts. Exporters are installed on the Itential hosts where they expose metrics
+  (e.g. the MongoDB exporter runs on `mongodb` hosts).
+
+- **ELK Stack** — installs [Elasticsearch](https://www.elastic.co/elasticsearch/),
+  [Logstash](https://www.elastic.co/logstash/), [Kibana](https://www.elastic.co/kibana/), and
+  [Filebeat](https://www.elastic.co/beats/filebeat/) to provide centralized log aggregation and
+  search across all Itential hosts. Elasticsearch, Logstash, and Kibana each run on dedicated
+  hosts. Filebeat is deployed to all Itential application nodes to ship logs.
 
 **&#9432; Note:**
 These are optional playbooks and roles and are not required for operation of the Itential platform.
+
+## Overview
+
+This collection provides two independent monitoring stacks:
+
+- **Prometheus / Grafana** — metrics collection and dashboards
+- **ELK Stack** — log aggregation and search (Elasticsearch, Logstash, Kibana, Filebeat)
+
+Both stacks are optional and can be deployed independently or together.
 
 ## Setup
 
@@ -52,6 +68,50 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
 ## Roles
+
+### ELK Stack Roles
+
+#### Elasticsearch Role
+
+The `itential.monitoring.elasticsearch` role installs and configures
+[Elasticsearch](https://www.elastic.co/elasticsearch/) as the log storage backend. It supports
+single-node and multi-node cluster deployments. xpack security and TLS are enabled by default.
+
+#### Logstash Role
+
+The `itential.monitoring.logstash` role installs and configures
+[Logstash](https://www.elastic.co/logstash/) as the log processing pipeline. It receives events
+from Filebeat over the Beats protocol, enriches and routes them by the `app` field, and writes
+them to Elasticsearch. The role manages the Logstash keystore, storing the Elasticsearch
+`logstash_writer` password as `ELASTIC_PASSWORD` and configuring the service environment so
+Logstash can decrypt the keystore at startup.
+
+#### Kibana Role
+
+The `itential.monitoring.kibana` role installs and configures
+[Kibana](https://www.elastic.co/kibana/) as the log visualization UI. It connects to
+Elasticsearch and optionally serves HTTPS when TLS is enabled.
+
+#### Filebeat Role
+
+The `itential.monitoring.filebeat` role installs and configures
+[Filebeat](https://www.elastic.co/beats/filebeat/) on Itential application nodes. Inputs are
+managed as drop-in files under `/etc/filebeat/inputs.d/` and ship logs to Logstash (default)
+or directly to Elasticsearch. App-specific input configurations are available for:
+
+| Host Group | Input |
+|---|---|
+| `platform*` | IAP main, web, and sub-process logs |
+| `iag5_clients` | IAG5 gateway client logs |
+| `iag5_servers` | IAG5 gateway server logs |
+| `iag5_runners` | IAG5 gateway runner logs |
+| `mongodb*` | MongoDB logs |
+| `redis_master`, `redis_replica` | Redis logs |
+| `redis_sentinel` | Redis Sentinel logs |
+
+---
+
+### Prometheus / Grafana Roles
 
 There are currently two `itential.monitoring` and several `prometheus.prometheus` roles responsible
 for installing all of the necessary components.
@@ -112,6 +172,54 @@ Refer to the [Example Inventory](#example-inventory) section.
 
 There are no global variables.
 
+### ELK Stack Role Variables
+
+#### Elasticsearch Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `elasticsearch_version` | String | Elasticsearch version to install | `8.13.0` |
+| `elasticsearch_http_port` | Integer | HTTP API port | `9200` |
+| `elasticsearch_transport_port` | Integer | Inter-node transport port | `9300` |
+| `elasticsearch_cluster_name` | String | Cluster name | `itential-monitoring` |
+| `elasticsearch_heap_size` | String | JVM heap size | `1g` |
+| `elasticsearch_tls_enabled` | Boolean | Enable xpack security and TLS | `true` |
+| `elasticsearch_discovery_seed_hosts` | List | Seed hosts for cluster discovery | `[]` |
+| `elasticsearch_cluster_initial_master_nodes` | List | Initial master nodes for bootstrap | `[]` |
+
+#### Logstash Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `logstash_version` | String | Logstash version to install | `8.13.0` |
+| `logstash_heap_size` | String | JVM heap size | `1g` |
+| `logstash_beats_port` | Integer | Port for the Beats input | `5044` |
+| `logstash_tls_enabled` | Boolean | Enable TLS for Beats input and Elasticsearch output | `true` |
+| `logstash_elasticsearch_hosts` | List | Elasticsearch output hosts | `["https://localhost:9200"]` |
+| `logstash_keystore_password` | String | Logstash keystore password — **must be set via Ansible Vault** | `""` |
+| `logstash_elastic_password` | String | Password for the `logstash_writer` Elasticsearch user — **must be set via Ansible Vault** | `""` |
+| `logstash_pipeline_workers` | Integer | Pipeline worker threads | `ansible_processor_vcpus` |
+
+#### Kibana Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `kibana_version` | String | Kibana version to install | `8.13.0` |
+| `kibana_server_port` | Integer | Port Kibana listens on | `5601` |
+| `kibana_elasticsearch_hosts` | List | Elasticsearch hosts to connect to | `["https://localhost:9200"]` |
+| `kibana_tls_enabled` | Boolean | Enable TLS for Kibana server and Elasticsearch connection | `true` |
+
+#### Filebeat Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `filebeat_version` | String | Filebeat version to install | `8.13.0` |
+| `filebeat_environment` | String | Environment label attached to every event (e.g. `production`) | unset |
+| `filebeat_tls_enabled` | Boolean | Enable TLS for the output | `true` |
+| `filebeat_output_logstash_enabled` | Boolean | Send output to Logstash | `true` |
+| `filebeat_output_logstash_hosts` | List | Logstash hosts | `["localhost:5044"]` |
+| `filebeat_output_elasticsearch_enabled` | Boolean | Send output directly to Elasticsearch | `false` |
+
 ### Prometheus Role Variables
 
 All Prometheus variables are handled by the `prometheus.prometheus.prometheus` role.  Refer to the
@@ -160,6 +268,70 @@ all:
 | `grafana_allow_ui_updates` | Boolean | A flag to enable/disable saving dashboards in the grafana UI. | `false` |
 
 ## Building Your Inventory
+
+### ELK Stack Inventory
+
+Add `elasticsearch`, `logstash`, and `kibana` groups for the ELK server components. Filebeat is
+deployed to the existing Itential host groups — no additional groups are needed for it.
+
+TLS certificates must be distributed to each host before the play runs. Each role expects
+its certs under `/etc/<role>/certs/` by default (configurable via the `*_tls_cert`,
+`*_tls_key`, and `*_tls_ca_cert` variables).
+
+#### ELK Example Inventory
+
+```yaml
+all:
+  vars:
+    filebeat_environment: production
+    filebeat_output_logstash_hosts:
+      - "logstash-host:5044"
+
+  children:
+    elasticsearch:
+      hosts:
+        <ELASTICSEARCH-HOST>:
+      vars:
+        elasticsearch_heap_size: "4g"
+
+    logstash:
+      hosts:
+        <LOGSTASH-HOST>:
+      vars:
+        logstash_heap_size: "2g"
+        logstash_elasticsearch_hosts:
+          - "https://<ELASTICSEARCH-HOST>:9200"
+        logstash_keystore_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          ...
+        logstash_elastic_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          ...
+
+    kibana:
+      hosts:
+        <KIBANA-HOST>:
+      vars:
+        kibana_elasticsearch_hosts:
+          - "https://<ELASTICSEARCH-HOST>:9200"
+
+    platform:
+      hosts:
+        <PLATFORM-HOST-1>:
+        <PLATFORM-HOST-N>:
+
+    mongodb:
+      hosts:
+        <MONGODB-HOST-1>:
+        <MONGODB-HOST-N>:
+
+    redis:
+      hosts:
+        <REDIS-HOST-1>:
+        <REDIS-HOST-N>:
+```
+
+### Prometheus / Grafana Inventory
 
 To install and configure Prometheus and Grafana, add `prometheus` and `grafana` groups and hosts to
 your inventory (in addition to the other Itential-related groups and hosts).
@@ -222,6 +394,38 @@ all:
 ```
 
 ## Running the Playbooks
+
+### ELK Stack Playbooks
+
+To deploy the full ELK stack (Elasticsearch, Logstash, Kibana, and Filebeat), run the `elk` playbook:
+
+```bash
+ansible-playbook itential.monitoring.elk -i <inventory>
+```
+
+To deploy individual components:
+
+```bash
+ansible-playbook itential.monitoring.elasticsearch -i <inventory>
+ansible-playbook itential.monitoring.logstash -i <inventory>
+ansible-playbook itential.monitoring.kibana -i <inventory>
+ansible-playbook itential.monitoring.filebeat -i <inventory>
+```
+
+You can selectively execute portions of each role using the following tags:
+
+| Tag | Description |
+| ---- | ----------- |
+| `elasticsearch_install` | Install the Elasticsearch package and configure repositories |
+| `elasticsearch_configure` | Deploy Elasticsearch configuration files |
+| `logstash_install` | Install the Logstash package and configure repositories |
+| `logstash_configure` | Deploy Logstash config files and manage keystore secrets |
+| `kibana_install` | Install the Kibana package and configure repositories |
+| `kibana_configure` | Deploy `kibana.yml` |
+| `filebeat_install` | Install the Filebeat package and configure repositories |
+| `filebeat_configure` | Deploy `filebeat.yml` and input configurations |
+
+### Prometheus / Grafana Playbooks
 
 To execute the installation of Prometheus, Grafana and all the exporters, run the `prometheus_site` playbook:
 
