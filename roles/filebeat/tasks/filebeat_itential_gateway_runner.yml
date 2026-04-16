@@ -1,0 +1,11 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Deploy Itential Gateway Runner input configuration
+  ansible.builtin.template:
+    src: input_itential_gateway_runner.yml.j2
+    dest: /etc/filebeat/inputs.d/itential-gateway-runner.yml
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart Filebeat

@@ -1,0 +1,34 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+kibana_version: "8.13.0"
+
+# Network
+kibana_server_port: 5601
+kibana_server_host: "0.0.0.0"
+kibana_server_name: "{{ inventory_hostname }}"
+
+# Elasticsearch connection
+kibana_elasticsearch_hosts:
+  - "https://localhost:9200"
+
+# Paths
+kibana_data_path: /var/lib/kibana
+kibana_log_path: /var/log/kibana
+
+# System user/group created by the package
+kibana_user: kibana
+kibana_group: kibana
+
+# Service
+kibana_service_name: kibana
+
+# Optional base path if Kibana is behind a reverse proxy (e.g. /kibana)
+kibana_server_base_path: ""
+kibana_server_rewrite_base_path: false
+
+# TLS — secures both the Kibana server (HTTPS) and the Elasticsearch connection
+kibana_tls_enabled: true
+kibana_tls_cert: /etc/kibana/certs/kibana.crt
+kibana_tls_key: /etc/kibana/certs/kibana.key
+kibana_tls_ca_cert: /etc/kibana/certs/ca.crt

@@ -1,0 +1,45 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+# Managed by Ansible — do not edit manually
+
+cluster.name: {{ elasticsearch_cluster_name }}
+node.name: {{ elasticsearch_node_name }}
+
+# Paths
+path.data: {{ elasticsearch_data_path }}
+path.logs: {{ elasticsearch_log_path }}
+
+# Network
+network.host: {{ elasticsearch_network_host }}
+http.port: {{ elasticsearch_http_port }}
+transport.port: {{ elasticsearch_transport_port }}
+
+# Discovery
+{% if elasticsearch_discovery_seed_hosts | length > 0 %}
+discovery.seed_hosts:
+{% for host in elasticsearch_discovery_seed_hosts %}
+  - {{ host }}
+{% endfor %}
+{% else %}
+discovery.type: single-node
+{% endif %}
+
+{% if elasticsearch_cluster_initial_master_nodes | length > 0 %}
+cluster.initial_master_nodes:
+{% for node in elasticsearch_cluster_initial_master_nodes %}
+  - {{ node }}
+{% endfor %}
+{% endif %}
+
+# Security / TLS
+xpack.security.enabled: {{ elasticsearch_tls_enabled | lower }}
+xpack.security.transport.ssl.enabled: {{ elasticsearch_tls_enabled | lower }}
+xpack.security.http.ssl.enabled: {{ elasticsearch_tls_enabled | lower }}
+{% if elasticsearch_tls_enabled | bool %}
+xpack.security.transport.ssl.certificate_authorities: ["{{ elasticsearch_tls_ca_cert }}"]
+xpack.security.transport.ssl.certificate: {{ elasticsearch_tls_cert }}
+xpack.security.transport.ssl.key: {{ elasticsearch_tls_key }}
+xpack.security.http.ssl.certificate_authorities: ["{{ elasticsearch_tls_ca_cert }}"]
+xpack.security.http.ssl.certificate: {{ elasticsearch_tls_cert }}
+xpack.security.http.ssl.key: {{ elasticsearch_tls_key }}
+{% endif %}

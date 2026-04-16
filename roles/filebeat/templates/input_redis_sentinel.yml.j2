@@ -1,0 +1,13 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+# Managed by Ansible — do not edit manually
+
+# --- Redis Sentinel (HA deployments) ---
+- type: log
+  enabled: true
+  paths:
+    - /var/log/redis/sentinel.log
+  fields:
+    app: redis-sentinel
+    environment: {{ filebeat_environment }}
+  fields_under_root: true

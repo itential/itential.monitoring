@@ -1,0 +1,90 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Elasticsearch
+  tags: elasticsearch_install
+  block:
+    - name: Add Elasticsearch RPM GPG key
+      ansible.builtin.rpm_key:
+        key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Elasticsearch YUM repository
+      ansible.builtin.yum_repository:
+        name: elasticsearch
+        description: Elasticsearch repository
+        baseurl: "https://artifacts.elastic.co/packages/{{ elasticsearch_version.split('.')[0] }}.x/yum"
+        gpgcheck: true
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        enabled: true
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Elasticsearch APT GPG key
+      ansible.builtin.apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Add Elasticsearch APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/{{ elasticsearch_version.split('.')[0] }}.x/apt stable main"
+        state: present
+        filename: elasticsearch
+      when: ansible_os_family == "Debian"
+
+    - name: Install Elasticsearch package
+      ansible.builtin.package:
+        name: "elasticsearch{% if ansible_os_family == 'RedHat' %}-{{ elasticsearch_version }}{% endif %}"
+        state: present
+
+- name: Configure Elasticsearch
+  tags: elasticsearch_configure
+  block:
+    - name: Ensure data and log directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ elasticsearch_user }}"
+        group: "{{ elasticsearch_group }}"
+        mode: "0750"
+      loop:
+        - "{{ elasticsearch_data_path }}"
+        - "{{ elasticsearch_log_path }}"
+
+    - name: Deploy elasticsearch.yml
+      notify: Restart Elasticsearch
+      ansible.builtin.template:
+        src: elasticsearch.yml.j2
+        dest: /etc/elasticsearch/elasticsearch.yml
+        owner: root
+        group: "{{ elasticsearch_group }}"
+        mode: "0660"
+
+    - name: Deploy JVM heap options
+      notify: Restart Elasticsearch
+      ansible.builtin.template:
+        src: jvm.options.j2
+        dest: /etc/elasticsearch/jvm.options.d/itential-heap.options
+        owner: root
+        group: "{{ elasticsearch_group }}"
+        mode: "0660"
+
+- name: Ensure Elasticsearch is running
+  tags: always
+  block:
+    - name: Flush all handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start Elasticsearch
+      ansible.builtin.systemd:
+        name: "{{ elasticsearch_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Assert that Elasticsearch is running
+      ansible.builtin.systemd:
+        name: "{{ elasticsearch_service_name }}"
+      register: elasticsearch_status
+      failed_when: elasticsearch_status.status.ActiveState != "active"

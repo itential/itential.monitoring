@@ -1,0 +1,96 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Filebeat
+  tags: filebeat_install
+  block:
+    - name: Add Elastic RPM GPG key
+      ansible.builtin.rpm_key:
+        key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Filebeat YUM repository
+      ansible.builtin.yum_repository:
+        name: filebeat
+        description: Filebeat repository
+        baseurl: "https://artifacts.elastic.co/packages/{{ filebeat_version.split('.')[0] }}.x/yum"
+        gpgcheck: true
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        enabled: true
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Elastic APT GPG key
+      ansible.builtin.apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Add Filebeat APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/{{ filebeat_version.split('.')[0] }}.x/apt stable main"
+        state: present
+        filename: filebeat
+      when: ansible_os_family == "Debian"
+
+    - name: Install Filebeat package
+      ansible.builtin.package:
+        name: "filebeat{% if ansible_os_family == 'RedHat' %}-{{ filebeat_version }}{% endif %}"
+        state: present
+
+- name: Configure Filebeat
+  tags: filebeat_configure
+  block:
+    - name: Ensure data, inputs and log directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ filebeat_user }}"
+        group: "{{ filebeat_group }}"
+        mode: "0750"
+      loop:
+        - "{{ filebeat_data_path }}"
+        - "{{ filebeat_inputs_path }}"
+        - "{{ filebeat_log_path }}"
+
+    - name: Deploy filebeat.yml
+      notify: Restart Filebeat
+      ansible.builtin.template:
+        src: filebeat.yml.j2
+        dest: /etc/filebeat/filebeat.yml
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Deploy default input configuration
+      ansible.builtin.template:
+        src: input_default.yml.j2
+        dest: /etc/filebeat/inputs.d/default.yml
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Load Kibana dashboards
+      ansible.builtin.command:
+        cmd: filebeat setup --dashboards
+      when: filebeat_setup_dashboards_enabled | bool
+      changed_when: true
+
+- name: Ensure Filebeat is running
+  tags: always
+  block:
+    - name: Flush all handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start Filebeat
+      ansible.builtin.systemd:
+        name: "{{ filebeat_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Assert that Filebeat is running
+      ansible.builtin.systemd:
+        name: "{{ filebeat_service_name }}"
+      register: filebeat_status
+      failed_when: filebeat_status.status.ActiveState != "active"

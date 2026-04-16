@@ -1,0 +1,340 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+# Managed by Ansible — do not edit manually
+
+# /etc/logstash/conf.d/itential.conf
+
+input {
+  beats {
+    port => {{ logstash_beats_port }}
+{% if logstash_tls_enabled | bool %}
+    ssl             => true
+    ssl_certificate => "{{ logstash_tls_cert }}"
+    ssl_key         => "{{ logstash_tls_key }}"
+{% else %}
+    ssl => false
+{% endif %}
+  }
+}
+
+filter {
+
+  # Fallback for events arriving without an app field
+  if ![app] {
+    mutate {
+      add_field => { "app" => "unknown" }
+    }
+  }
+
+  # IAP sub-process logs
+  if [app] == "itential-platform-service" {
+
+    # Extract sub-process name from log file path
+    grok {
+      match => {
+        "[log][file][path]" => "/var/log/itential/platform/%{GREEDYDATA:itential.process}"
+      }
+    }
+    mutate {
+      gsub => ["itential.process", "\.log$", ""]
+    }
+
+    # Unwrap message from JSON array string
+    # IAP wraps log messages as: ["message text"]
+    # Must run before sub-process specific filters that match on message content
+    # Handles both @message and message depending on Filebeat version
+    ruby {
+      code => '
+        msg = event.get("@message") || event.get("message")
+        if msg && msg.start_with?("[\"") && msg.end_with?("\"]")
+          clean = msg[2..-3]
+          event.set("message", clean)
+          event.remove("@message")
+        end
+      '
+    }
+
+    # Promote @fields subkeys to top level
+    if [@fields] {
+      mutate {
+        rename => { "[@fields][@level]"  => "log.level"      }
+        rename => { "[@fields][@origin]" => "itential.origin" }
+        remove_field => ["@fields"]
+      }
+    }
+  }
+
+  # IAP main platform process
+  if [app] == "itential-platform-main" {
+    mutate { add_field => { "itential.process" => "platform" } }
+  }
+
+  # IAP webserver
+  if [app] == "itential-platform-web" {
+    mutate { add_field => { "itential.process" => "webserver" } }
+
+    # Strip IPv4-mapped IPv6 prefix
+    mutate {
+      gsub => ["remote_addr", "^::ffff:", ""]
+      rename => {
+        "remote_addr"   => "itential.client_ip"
+        "remote_user"   => "itential.user"
+        "method"        => "itential.http.method"
+        "url"           => "itential.http.url"
+        "http_version"  => "itential.http.version"
+        "status"        => "itential.http.status"
+        "result_length" => "itential.http.response_bytes"
+        "total_time_ms" => "itential.http.duration_ms"
+      }
+    }
+
+    mutate {
+      convert => {
+        "itential.http.status"         => "integer"
+        "itential.http.response_bytes" => "integer"
+        "itential.http.duration_ms"    => "float"
+      }
+    }
+
+    # Extract IAP job ID from request URL
+    if [itential.http.url] =~ "/jobs/" {
+      grok {
+        match => { "itential.http.url" => "/jobs/%{WORD:itential.iap_job_id}" }
+      }
+    }
+
+    # Tag job submission events
+    if [itential.http.url] == "/jobs/start" and [itential.http.method] == "POST" {
+      mutate { add_tag => ["job_submitted"] }
+    }
+
+    # Tag HTTP errors
+    if [itential.http.status] and [itential.http.status] >= 400 and [itential.http.status] < 500 {
+      mutate { add_tag => ["http_client_error"] }
+    }
+    if [itential.http.status] and [itential.http.status] >= 500 {
+      mutate { add_tag => ["http_server_error", "automation_failure"] }
+    }
+
+    # Webserver uses Apache-style date format
+    date {
+      match        => ["date", "dd/MMM/yyyy:HH:mm:ss Z"]
+      target       => "@timestamp"
+      remove_field => ["date"]
+    }
+  }
+
+  # WorkFlowEngine
+  if [itential.process] == "WorkFlowEngine" {
+    mutate {
+      rename => {
+        "job_id"    => "itential.job.id"
+        "job_name"  => "itential.job.name"
+        "task_id"   => "itential.task.id"
+        "task_name" => "itential.task.name"
+        "workflow"  => "itential.workflow"
+        "status"    => "itential.job.status"
+        "duration"  => "itential.job.duration_ms"
+      }
+    }
+    if [itential.job.status] == "error" or [itential.job.status] == "failed" {
+      mutate { add_tag => ["automation_failure"] }
+    }
+  }
+
+  # GatewayManager
+  # Note: message unwrapping above must run before this block
+  if [itential.process] == "GatewayManager" {
+
+    # Extract gateway dispatch UUID
+    # This is the cross-boundary correlation key between IAP and IAG5
+    if [message] =~ /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ {
+      grok {
+        match => { "message" => "%{UUID:itential.job.id}" }
+      }
+    }
+
+    # Extract gateway name
+    if [message] =~ "gateway:" {
+      grok {
+        match => { "message" => "gateway: %{WORD:itential.gateway.name}" }
+      }
+    }
+
+    # Extract BullMQ queue name
+    if [message] =~ "Adding job to queue" {
+      grok {
+        match => { "message" => "Adding job to queue: %{GREEDYDATA:itential.bullmq.queue}" }
+      }
+    }
+
+    # Extract BullMQ queue name and internal job ID
+    if [message] =~ "Job added to BullMQ" {
+      grok {
+        match => { "message" => "Job added to BullMQ: %{GREEDYDATA:itential.bullmq.queue} with id: %{INT:itential.bullmq.job_id}" }
+      }
+    }
+
+    if [message] =~ "failed" or [message] =~ "error" {
+      mutate { add_tag => ["gateway_connectivity_failure"] }
+    }
+  }
+
+  # IAG5
+  if [app] == "itential-gateway-server" {
+
+    # IAG5 uses 'time' not 'timestamp'
+    date {
+      match        => ["time", "ISO8601"]
+      target       => "@timestamp"
+      remove_field => ["time"]
+    }
+
+    if [error] {
+      mutate {
+        rename => { "error" => "[error][message]" }
+        add_tag => ["gateway_error"]
+      }
+    }
+
+    # Extract user, IP, and gRPC method
+    if [message] =~ "made request to METHOD" {
+      grok {
+        match => { "message" => "USER: %{USER:itential.user}@%{IP:itential.client_ip} made request to METHOD: `%{GREEDYDATA:itential.grpc_method}`" }
+      }
+    }
+
+    # Extract job ID from RunService invocation
+    # Named itential.job.id to match GatewayManager field for cross-component correlation
+    if [message] =~ "JSON RPC called with Id" {
+      grok {
+        match => { "message" => "called with Id '%{UUID:itential.job.id}'" }
+      }
+    }
+
+    # Extract job ID from response message
+    if [message] =~ "writing response for message with Id" {
+      grok {
+        match => { "message" => "writing response for message with Id of '%{UUID:itential.job.id}'" }
+      }
+    }
+
+    # Extract job ID from ACK message
+    if [message] =~ "received ACK for message Id" {
+      grok {
+        match => { "message" => "received ACK for message Id: '%{UUID:itential.job.id}'" }
+      }
+    }
+
+    # Extract job ID from other messages containing a bare UUID
+    # Only runs if itential.job.id not already set by the patterns above
+    if [message] =~ /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ and ![itential.job.id] {
+      grok {
+        match => { "message" => "%{UUID:itential.job.id}" }
+      }
+    }
+
+    # Extract active-requests store path fields
+    if [message] =~ "active-requests" {
+      grok {
+        match => { "message" => "gateway/%{WORD:itential.gateway.name}/active-requests/v1/%{HOSTNAME:itential.gateway.host}/%{UUID:itential.session.id}/%{UUID:itential.job.id}" }
+      }
+    }
+
+    # Extract command exit status and execution time
+    if [message] =~ "command exit status" {
+      grok {
+        match => { "message" => "command exit status: %{INT:itential.exit_status}, execution time: %{NUMBER:itential.duration_value}%{GREEDYDATA:itential.duration_unit}" }
+      }
+      mutate {
+        convert => {
+          "itential.exit_status"    => "integer"
+          "itential.duration_value" => "float"
+        }
+      }
+      if [itential.exit_status] != 0 {
+        mutate { add_tag => ["command_failure"] }
+      }
+    }
+
+    # Extract gateway manager connectivity details
+    if [message] =~ "gateway manager at" {
+      grok {
+        match => { "message" => "gateway manager at %{IPORHOST:itential.gateway_manager.host}:%{INT:itential.gateway_manager.port}" }
+      }
+    }
+
+    if [message] =~ "failed to establish" {
+      mutate { add_tag => ["gateway_connectivity_failure"] }
+    }
+
+    if [message] =~ "source repository url" {
+      grok {
+        match => { "message" => "source repository url is %{URI:itential.source.repo_url}" }
+      }
+    }
+  }
+
+  # MongoDB
+  if [app] == "mongodb" {
+    grok {
+      match => { "message" => "%{TIMESTAMP_ISO8601:timestamp}\s+%{WORD:log_level}\s+%{GREEDYDATA:mongo_message}" }
+    }
+    if [mongo_message] =~ /ms$/ {
+      mutate { add_tag => ["slow_query"] }
+    }
+  }
+
+  # Syslog
+  if [app] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_host} %{GREEDYDATA:syslog_message}" }
+    }
+    date {
+      match        => ["syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss"]
+      target       => "@timestamp"
+      remove_field => ["syslog_timestamp"]
+    }
+  }
+
+  # Normalize ISO8601 timestamp
+  # Guarded so it only runs on events that have a timestamp field
+  if [timestamp] {
+    date {
+      match        => ["timestamp", "ISO8601"]
+      target       => "@timestamp"
+      remove_field => ["timestamp"]
+    }
+  }
+
+  # Record Logstash ingest time for pipeline lag diagnostics
+  ruby {
+    code => "event.set('event.ingested', Time.now.utc.iso8601(3))"
+  }
+}
+
+output {
+  # Route automation failures to dedicated index for alerting
+  if "automation_failure" in [tags] {
+    elasticsearch {
+      hosts    => {{ logstash_elasticsearch_hosts | to_json }}
+      index    => "itential-failures-%{+yyyy.MM.dd}"
+      user     => "logstash_writer"
+      password => "${ELASTIC_PASSWORD}"
+{% if logstash_tls_enabled | bool %}
+      ssl_certificate_authorities => ["{{ logstash_tls_ca_cert }}"]
+{% endif %}
+    }
+  }
+
+  # All logs routed by app name
+  elasticsearch {
+    hosts    => {{ logstash_elasticsearch_hosts | to_json }}
+    index    => "itential-logs-%{app}-%{+yyyy.MM.dd}"
+    user     => "logstash_writer"
+    password => "${ELASTIC_PASSWORD}"
+{% if logstash_tls_enabled | bool %}
+    ssl_certificate_authorities => ["{{ logstash_tls_ca_cert }}"]
+{% endif %}
+  }
+}

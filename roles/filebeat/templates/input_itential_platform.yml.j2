@@ -1,0 +1,39 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+# Managed by Ansible — do not edit manually
+
+# --- IAP main platform process ---
+- type: log
+  enabled: true
+  paths:
+    - /var/log/itential/platform/platform.log
+  json.keys_under_root: true
+  json.add_error_key: true
+  fields:
+    app: itential-platform-main
+    environment: {{ filebeat_environment }}
+  fields_under_root: true
+
+# --- IAP webserver (HTTP API layer) ---
+- type: log
+  enabled: true
+  paths:
+    - /var/log/itential/platform/webserver.log
+  json.keys_under_root: true
+  json.add_error_key: true
+  fields:
+    app: itential-platform-web
+    environment: {{ filebeat_environment }}
+  fields_under_root: true
+
+# --- IAP sub-process logs (all capital-letter named files) ---
+- type: log
+  enabled: true
+  paths:
+    - /var/log/itential/platform/[A-Z]*.log
+  json.keys_under_root: true
+  json.add_error_key: true
+  fields:
+    app: itential-platform-service
+    environment: {{ filebeat_environment }}
+  fields_under_root: true

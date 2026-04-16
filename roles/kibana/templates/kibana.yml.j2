@@ -1,0 +1,43 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+# Managed by Ansible — do not edit manually
+
+# Server
+server.port: {{ kibana_server_port }}
+server.host: "{{ kibana_server_host }}"
+server.name: "{{ kibana_server_name }}"
+
+{% if kibana_server_base_path | length > 0 %}
+server.basePath: "{{ kibana_server_base_path }}"
+server.rewriteBasePath: {{ kibana_server_rewrite_base_path | lower }}
+{% endif %}
+
+# Server TLS
+{% if kibana_tls_enabled | bool %}
+server.ssl.enabled: true
+server.ssl.certificate: {{ kibana_tls_cert }}
+server.ssl.key: {{ kibana_tls_key }}
+{% else %}
+server.ssl.enabled: false
+{% endif %}
+
+# Elasticsearch
+elasticsearch.hosts: {{ kibana_elasticsearch_hosts | to_json }}
+{% if kibana_tls_enabled | bool %}
+elasticsearch.ssl.certificateAuthorities: ["{{ kibana_tls_ca_cert }}"]
+elasticsearch.ssl.verificationMode: certificate
+{% endif %}
+
+# Paths
+path.data: {{ kibana_data_path }}
+
+# Logging (Kibana 8.x structured logging)
+logging:
+  appenders:
+    file:
+      type: file
+      fileName: {{ kibana_log_path }}/kibana.log
+      layout:
+        type: json
+  root:
+    appenders: [default, file]
