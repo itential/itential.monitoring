@@ -1,0 +1,40 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+# Managed by Ansible — do not edit manually
+
+# ======================== Filebeat inputs ========================
+filebeat.config.inputs:
+  enabled: true
+  path: /etc/filebeat/inputs.d/*.yml
+  reload.enabled: true
+  reload.period: 10s
+
+# ======================== Paths ========================
+path.data: {{ filebeat_data_path }}
+path.logs: {{ filebeat_log_path }}
+
+# ======================== Kibana ========================
+setup.kibana:
+  host: "{{ filebeat_setup_kibana_host }}"
+
+# ======================== Outputs ========================
+{% if filebeat_output_logstash_enabled | bool %}
+output.logstash:
+  hosts: {{ filebeat_output_logstash_hosts | to_json }}
+{% if filebeat_tls_enabled | bool %}
+  ssl:
+    certificate_authorities: ["{{ filebeat_tls_ca_cert }}"]
+    certificate: "{{ filebeat_tls_cert }}"
+    key: "{{ filebeat_tls_key }}"
+{% endif %}
+{% elif filebeat_output_elasticsearch_enabled | bool %}
+output.elasticsearch:
+  hosts: {{ filebeat_output_elasticsearch_hosts | to_json }}
+  index: "{{ filebeat_output_elasticsearch_index }}"
+{% if filebeat_tls_enabled | bool %}
+  ssl:
+    certificate_authorities: ["{{ filebeat_tls_ca_cert }}"]
+    certificate: "{{ filebeat_tls_cert }}"
+    key: "{{ filebeat_tls_key }}"
+{% endif %}
+{% endif %}

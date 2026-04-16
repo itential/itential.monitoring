@@ -1,0 +1,71 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Deploy Filebeat to Itential app nodes
+  hosts: redis*, mongodb*, platform*, iag5*
+  become: true
+  roles:
+    - role: itential.monitoring.filebeat
+
+- name: Deploy Redis Filebeat configuration
+  hosts: redis_master, redis_replica
+  become: true
+  tasks:
+    - name: Configure Filebeat for Redis nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_redis
+
+- name: Deploy Redis Sentinel Filebeat configuration
+  hosts: redis_sentinel
+  become: true
+  tasks:
+    - name: Configure Filebeat for Redis Sentinel nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_redis_sentinel
+
+- name: Deploy MongoDB Filebeat configuration
+  hosts: mongodb*
+  become: true
+  tasks:
+    - name: Configure Filebeat for MongoDB nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_mongodb
+
+- name: Deploy Itential Platform Filebeat configuration
+  hosts: platform*
+  become: true
+  tasks:
+    - name: Configure Filebeat for Itential Platform nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_itential_platform
+
+- name: Deploy Itential Gateway Client Filebeat configuration
+  hosts: iag5_clients
+  become: true
+  tasks:
+    - name: Configure Filebeat for Itential Gateway Client nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_itential_gateway_client
+
+- name: Deploy Itential Gateway Server Filebeat configuration
+  hosts: iag5_servers
+  become: true
+  tasks:
+    - name: Configure Filebeat for Itential Gateway Server nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_itential_gateway_server
+
+- name: Deploy Itential Gateway Runner Filebeat configuration
+  hosts: iag5_runners
+  become: true
+  tasks:
+    - name: Configure Filebeat for Itential Gateway Runner nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_itential_gateway_runner

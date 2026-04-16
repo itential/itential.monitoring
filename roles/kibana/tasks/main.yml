@@ -1,0 +1,81 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Kibana
+  tags: kibana_install
+  block:
+    - name: Add Elastic RPM GPG key
+      ansible.builtin.rpm_key:
+        key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Kibana YUM repository
+      ansible.builtin.yum_repository:
+        name: kibana
+        description: Kibana repository
+        baseurl: "https://artifacts.elastic.co/packages/{{ kibana_version.split('.')[0] }}.x/yum"
+        gpgcheck: true
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        enabled: true
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Elastic APT GPG key
+      ansible.builtin.apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Add Kibana APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/{{ kibana_version.split('.')[0] }}.x/apt stable main"
+        state: present
+        filename: kibana
+      when: ansible_os_family == "Debian"
+
+    - name: Install Kibana package
+      ansible.builtin.package:
+        name: "kibana{% if ansible_os_family == 'RedHat' %}-{{ kibana_version }}{% endif %}"
+        state: present
+
+- name: Configure Kibana
+  tags: kibana_configure
+  block:
+    - name: Ensure data and log directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ kibana_user }}"
+        group: "{{ kibana_group }}"
+        mode: "0750"
+      loop:
+        - "{{ kibana_data_path }}"
+        - "{{ kibana_log_path }}"
+
+    - name: Deploy kibana.yml
+      notify: Restart Kibana
+      ansible.builtin.template:
+        src: kibana.yml.j2
+        dest: /etc/kibana/kibana.yml
+        owner: root
+        group: "{{ kibana_group }}"
+        mode: "0660"
+
+- name: Ensure Kibana is running
+  tags: always
+  block:
+    - name: Flush all handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start Kibana
+      ansible.builtin.systemd:
+        name: "{{ kibana_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Assert that Kibana is running
+      ansible.builtin.systemd:
+        name: "{{ kibana_service_name }}"
+      register: kibana_status
+      failed_when: kibana_status.status.ActiveState != "active"

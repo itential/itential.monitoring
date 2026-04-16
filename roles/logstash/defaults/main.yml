@@ -1,0 +1,43 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+logstash_version: "8.13.0"
+
+# JVM heap (set both to the same value, no more than 50% of RAM)
+logstash_heap_size: "1g"
+
+# Paths
+logstash_data_path: /var/lib/logstash
+logstash_log_path: /var/log/logstash
+
+# System user/group created by the package
+logstash_user: logstash
+logstash_group: logstash
+
+# Service
+logstash_service_name: logstash
+
+# Beats input
+logstash_beats_port: 5044
+
+# TLS — secures both the Beats input and the Elasticsearch output
+logstash_tls_enabled: true
+logstash_tls_cert: /etc/logstash/certs/logstash.crt
+logstash_tls_key: /etc/logstash/certs/logstash.key
+logstash_tls_ca_cert: /etc/logstash/certs/ca.crt
+
+# Elasticsearch output
+logstash_elasticsearch_hosts:
+  - "https://localhost:9200"
+logstash_elasticsearch_index: "logstash-%{+YYYY.MM.dd}"
+
+# Keystore password — must be overridden (use Ansible Vault); empty passwords are not allowed in Logstash 8+
+logstash_keystore_password: ""
+
+# Elasticsearch password for the logstash_writer user — must be overridden (use Ansible Vault)
+logstash_elastic_password: ""
+
+# Pipeline workers (defaults to number of CPUs)
+logstash_pipeline_workers: "{{ ansible_processor_vcpus | default(2) }}"
+logstash_pipeline_batch_size: 125
+logstash_pipeline_batch_delay: 50

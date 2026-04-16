@@ -1,0 +1,14 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Deploy Elasticsearch
+  import_playbook: itential.monitoring.elasticsearch
+
+- name: Deploy Logstash
+  import_playbook: itential.monitoring.logstash
+
+- name: Deploy Kibana
+  import_playbook: itential.monitoring.kibana
+
+- name: Deploy Filebeat
+  import_playbook: itential.monitoring.filebeat

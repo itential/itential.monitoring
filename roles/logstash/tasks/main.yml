@@ -1,0 +1,150 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Logstash
+  tags: logstash_install
+  block:
+    - name: Add Elastic RPM GPG key
+      ansible.builtin.rpm_key:
+        key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Logstash YUM repository
+      ansible.builtin.yum_repository:
+        name: logstash
+        description: Logstash repository
+        baseurl: "https://artifacts.elastic.co/packages/{{ logstash_version.split('.')[0] }}.x/yum"
+        gpgcheck: true
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        enabled: true
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Elastic APT GPG key
+      ansible.builtin.apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Add Logstash APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/{{ logstash_version.split('.')[0] }}.x/apt stable main"
+        state: present
+        filename: logstash
+      when: ansible_os_family == "Debian"
+
+    - name: Install Logstash package
+      ansible.builtin.package:
+        name: "logstash{% if ansible_os_family == 'RedHat' %}-{{ logstash_version }}{% endif %}"
+        state: present
+
+- name: Configure Logstash
+  tags: logstash_configure
+  block:
+    - name: Ensure data and log directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ logstash_user }}"
+        group: "{{ logstash_group }}"
+        mode: "0750"
+      loop:
+        - "{{ logstash_data_path }}"
+        - "{{ logstash_log_path }}"
+
+    - name: Deploy logstash.yml
+      notify: Restart Logstash
+      ansible.builtin.template:
+        src: logstash.yml.j2
+        dest: /etc/logstash/logstash.yml
+        owner: root
+        group: "{{ logstash_group }}"
+        mode: "0660"
+
+    - name: Deploy JVM heap options
+      notify: Restart Logstash
+      ansible.builtin.template:
+        src: jvm.options.j2
+        dest: /etc/logstash/jvm.options
+        owner: root
+        group: "{{ logstash_group }}"
+        mode: "0660"
+
+    - name: Deploy Itential pipeline configuration
+      notify: Restart Logstash
+      ansible.builtin.template:
+        src: pipeline.conf.j2
+        dest: /etc/logstash/conf.d/itential.conf
+        owner: root
+        group: "{{ logstash_group }}"
+        mode: "0660"
+
+    - name: Check if Logstash keystore exists
+      ansible.builtin.stat:
+        path: /etc/logstash/logstash.keystore
+      register: logstash_keystore_stat
+
+    - name: Create Logstash keystore
+      ansible.builtin.command:
+        cmd: /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash create
+      environment:
+        LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
+      register: logstash_keystore_create
+      failed_when: logstash_keystore_add.rc != 0 or 'ERROR' in logstash_keystore_add.stdout
+      changed_when: "'Created Logstash keystore' in logstash_keystore_create.stdout"
+      when: not logstash_keystore_stat.stat.exists
+
+    - name: Remove existing ELASTIC_PASSWORD from keystore
+      ansible.builtin.command:
+        cmd: /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash remove ELASTIC_PASSWORD
+      environment:
+        LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
+      failed_when: false
+      changed_when: false
+      no_log: true
+
+    - name: Set ELASTIC_PASSWORD in Logstash keystore
+      ansible.builtin.shell:
+        cmd: >
+          set -o pipefail &&
+          echo "{{ logstash_elastic_password }}" |
+          /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash add ELASTIC_PASSWORD
+        executable: /bin/bash
+      environment:
+        LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
+      register: logstash_keystore_add
+      failed_when: logstash_keystore_add.rc != 0 or 'ERROR' in logstash_keystore_add.stdout
+      changed_when: "'Added \\'elastic_password\\' to the Logstash keystore' in logstash_keystore_add.stdout"
+      no_log: true
+      notify: Restart Logstash
+
+    - name: Set LOGSTASH_KEYSTORE_PASS in service environment
+      ansible.builtin.lineinfile:
+        path: "{{ '/etc/sysconfig/logstash' if ansible_os_family == 'RedHat' else '/etc/default/logstash' }}"
+        regexp: "^LOGSTASH_KEYSTORE_PASS="
+        line: "LOGSTASH_KEYSTORE_PASS={{ logstash_keystore_password }}"
+        create: true
+        owner: root
+        group: "{{ logstash_group }}"
+        mode: "0640"
+      no_log: true
+      notify: Restart Logstash
+
+- name: Ensure Logstash is running
+  tags: always
+  block:
+    - name: Flush all handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start Logstash
+      ansible.builtin.systemd:
+        name: "{{ logstash_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Assert that Logstash is running
+      ansible.builtin.systemd:
+        name: "{{ logstash_service_name }}"
+      register: logstash_status
+      failed_when: logstash_status.status.ActiveState != "active"

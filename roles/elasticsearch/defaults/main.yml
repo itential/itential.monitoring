@@ -1,0 +1,37 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+elasticsearch_version: "8.13.0"
+
+# Network
+elasticsearch_http_port: 9200
+elasticsearch_transport_port: 9300
+elasticsearch_network_host: "0.0.0.0"
+
+# Cluster
+elasticsearch_cluster_name: "itential-monitoring"
+elasticsearch_node_name: "{{ inventory_hostname }}"
+elasticsearch_discovery_seed_hosts: []
+elasticsearch_cluster_initial_master_nodes: []
+
+# Paths
+elasticsearch_data_path: /var/lib/elasticsearch
+elasticsearch_log_path: /var/log/elasticsearch
+
+# JVM heap (set both to the same value, no more than 50% of RAM)
+elasticsearch_heap_size: "1g"
+
+# TLS / Security — controls xpack.security.enabled, transport SSL, and HTTP SSL.
+# Elasticsearch 8.x auto-populates the keystore with SSL passwords at install time;
+# all three flags must be set consistently to avoid a startup conflict.
+elasticsearch_tls_enabled: true
+elasticsearch_tls_cert: /etc/elasticsearch/certs/elasticsearch.crt
+elasticsearch_tls_key: /etc/elasticsearch/certs/elasticsearch.key
+elasticsearch_tls_ca_cert: /etc/elasticsearch/certs/ca.crt
+
+# System user/group created by the package
+elasticsearch_user: elasticsearch
+elasticsearch_group: elasticsearch
+
+# Service
+elasticsearch_service_name: elasticsearch
