@@ -1,0 +1,29 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+# Loki endpoint — all Alloy agents push here.
+# Use the private/VPC-internal IP of the Loki host.
+# When Alloy and Loki are co-located, use http://localhost:3100.
+alloy_loki_url: ""
+
+# Alloy HTTP listen port (metrics, health, UI)
+alloy_http_listen_port: 12345
+
+# Service
+alloy_service_name: alloy
+
+# Additional file-based log paths to tail.
+# Each entry requires 'path' and 'job'.
+# Set per host group via inventory group_vars — do not set globally here.
+# Example:
+#   alloy_log_paths:
+#     - path: /var/log/nginx/*.log
+#       job: nginx
+alloy_log_paths: []
+
+# Extra OS groups to add the alloy user to for log file read access.
+# Set per host group via inventory group_vars.
+# Examples:
+#   mongodb hosts:  alloy_extra_groups: [mongod]
+#   iag5 hosts:     alloy_extra_groups: [itential]
+alloy_extra_groups: []

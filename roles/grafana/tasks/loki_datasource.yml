@@ -1,0 +1,17 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Assert grafana_loki_datasource_url is set
+  ansible.builtin.assert:
+    that: grafana_loki_datasource_url | length > 0
+    fail_msg: "grafana_loki_datasource_url must be set in inventory for the grafana group"
+
+- name: Create grafana datasources file with Loki
+  ansible.builtin.template:
+    src: grafana_datasources.yml.j2
+    dest: "{{ grafana_install_dir }}/provisioning/datasources/datasources.yml"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "0644"
+    lstrip_blocks: true
+  notify: Restart Grafana

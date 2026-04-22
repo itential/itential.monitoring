@@ -51,3 +51,14 @@ datasources:
   version: 1
   # <bool> allow users to edit datasources from the UI.
   editable: true
+{% if grafana_loki_datasource_enabled %}
+
+- name: Loki
+  type: loki
+  access: proxy
+  orgId: 1
+  url: {{ grafana_loki_datasource_url }}
+  isDefault: false
+  version: 1
+  editable: true
+{% endif %}

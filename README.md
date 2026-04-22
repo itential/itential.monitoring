@@ -1,6 +1,6 @@
 # Ansible Collection - itential.monitoring
 
-The playbooks and roles discussed in this guide install and configure two independent monitoring
+The playbooks and roles discussed in this guide install and configure three independent monitoring
 stacks for the Itential platform:
 
 - **Prometheus / Grafana** — installs [Prometheus](https://prometheus.io/),
@@ -15,17 +15,24 @@ stacks for the Itential platform:
   search across all Itential hosts. Elasticsearch, Logstash, and Kibana each run on dedicated
   hosts. Filebeat is deployed to all Itential application nodes to ship logs.
 
+- **Loki / Alloy** — installs [Grafana Loki](https://grafana.com/docs/loki/latest/) and
+  [Grafana Alloy](https://grafana.com/docs/alloy/latest/) to provide lightweight log aggregation
+  tightly integrated with the Grafana dashboards. Loki runs on a dedicated host (or co-located
+  with Grafana). Alloy is deployed to all Itential application nodes to collect systemd journal
+  events and application log files and ship them to Loki.
+
 **&#9432; Note:**
 These are optional playbooks and roles and are not required for operation of the Itential platform.
 
 ## Overview
 
-This collection provides two independent monitoring stacks:
+This collection provides three independent monitoring stacks:
 
 - **Prometheus / Grafana** — metrics collection and dashboards
 - **ELK Stack** — log aggregation and search (Elasticsearch, Logstash, Kibana, Filebeat)
+- **Loki / Alloy** — lightweight log aggregation integrated with Grafana (Loki, Alloy)
 
-Both stacks are optional and can be deployed independently or together.
+All stacks are optional and can be deployed independently or together.
 
 ## Setup
 
@@ -108,6 +115,39 @@ or directly to Elasticsearch. App-specific input configurations are available fo
 | `mongodb*` | MongoDB logs |
 | `redis_master`, `redis_replica` | Redis logs |
 | `redis_sentinel` | Redis Sentinel logs |
+
+---
+
+### Loki / Alloy Roles
+
+#### Loki Role
+
+The `itential.monitoring.loki` role installs and configures
+[Grafana Loki](https://grafana.com/docs/loki/latest/) as the log storage backend. Loki is
+installed as a binary downloaded from GitHub releases and runs under a dedicated systemd
+service. It uses filesystem storage and is suitable for single-node deployments. The role
+opens port 3100 in firewalld when the service is active.
+
+#### Alloy Role
+
+The `itential.monitoring.alloy` role installs and configures
+[Grafana Alloy](https://grafana.com/docs/alloy/latest/) on Itential application nodes.
+Alloy collects the systemd journal and application log files from each host and ships them
+to Loki. It is installed via the Grafana RPM repository. The role stops and disables
+Promtail if it is running. Log file paths and OS group memberships for each host group are
+pre-configured in the collection's `playbooks/group_vars/`:
+
+| Host Group | Log paths (`job` label) | `alloy_extra_groups` |
+|---|---|---|
+| `platform*` | webserver.log (`iap-http`), platform/*.log (`iap`) | — |
+| `iag5_servers` | gateway.log (`iag5-server`) | `[itential]` |
+| `iag5_runners` | gateway.log (`iag5-runner`) | `[itential]` |
+| `iag5_clients` | gateway.log (`iag5-client`) | `[itential]` |
+| `mongodb*` | mongod.log (`mongodb`) | `[mongod]` |
+| `redis_master`, `redis_replica` | redis.log (`redis`) | — |
+| `redis_sentinel` | sentinel.log (`redis-sentinel`) | — |
+
+The only variable required in inventory is `alloy_loki_url` set under `all.vars`.
 
 ---
 
@@ -266,6 +306,32 @@ all:
 | `grafana_install_dir` | String | The root installation directory where grafana will be installed. | `/etc/grafana` |
 | `grafana_dashboard_dir` | String | The directory path where the dashboards are uploaded to. | `/etc/grafana/provisioning/dashboards` |
 | `grafana_allow_ui_updates` | Boolean | A flag to enable/disable saving dashboards in the grafana UI. | `false` |
+| `grafana_loki_datasource_enabled` | Boolean | Provision a Loki datasource in Grafana. Set to `true` after Loki is deployed. | `false` |
+| `grafana_loki_datasource_url` | String | Loki URL for the Grafana datasource (e.g. `http://<LOKI-HOST>:3100`). Required when `grafana_loki_datasource_enabled` is `true`. | `""` |
+
+### Loki Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `loki_version` | String | Loki version to install | `3.7.1` |
+| `loki_http_listen_port` | Integer | HTTP API and push endpoint port | `3100` |
+| `loki_grpc_listen_port` | Integer | gRPC port | `9096` |
+| `loki_data_dir` | String | Loki data directory | `/var/lib/loki` |
+| `loki_config_dir` | String | Loki config directory | `/etc/loki` |
+| `loki_install_dir` | String | Directory for the Loki binary | `/usr/local/bin` |
+| `loki_reject_old_samples_max_age` | String | Reject logs older than this age (e.g. `168h` = 7 days, `720h` = 30 days) | `168h` |
+| `loki_max_entries_limit` | Integer | Max log entries returned per query | `5000` |
+| `loki_ingestion_rate_mb` | Integer | Ingestion rate limit in MB/s | `16` |
+| `loki_ingestion_burst_size_mb` | Integer | Ingestion burst size in MB | `32` |
+
+### Alloy Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `alloy_loki_url` | String | Loki push endpoint URL. Set once under `all.vars` in inventory (use private/VPC IP). | `""` |
+| `alloy_http_listen_port` | Integer | Alloy HTTP port for metrics, health, and UI | `12345` |
+| `alloy_log_paths` | List | File-based log paths to tail. Pre-configured per host group in `playbooks/group_vars/`. Override in inventory to customise. | `[]` |
+| `alloy_extra_groups` | List | Extra OS groups to add the alloy user to for log file read access. Pre-configured for `mongodb*` and `iag5*` groups. | `[]` |
 
 ## Building Your Inventory
 
@@ -331,6 +397,63 @@ all:
         <REDIS-HOST-N>:
 ```
 
+### Loki / Alloy Inventory
+
+Add a `loki` group for the Loki server. For a dev or lab setup, this can be the same VM
+as `grafana`. Set `alloy_loki_url` once under `all.vars` — log paths and OS group
+memberships for each host group are pre-configured in the collection and require no
+additional inventory config.
+
+#### Loki / Alloy Example Inventory
+
+```yaml
+all:
+  vars:
+    alloy_loki_url: "http://<LOKI-PRIVATE-IP>:3100"   # private/VPC IP — set once here
+
+  children:
+    loki:
+      hosts:
+        <LOKI-HOST>:
+
+    grafana:
+      hosts:
+        <GRAFANA-HOST>:   # can be the same VM as loki
+      vars:
+        grafana_loki_datasource_url: "http://<LOKI-PRIVATE-IP>:3100"
+
+    platform:
+      hosts:
+        <PLATFORM-HOST-1>:
+        <PLATFORM-HOST-N>:
+
+    mongodb:
+      hosts:
+        <MONGODB-HOST-1>:
+        <MONGODB-HOST-N>:
+
+    redis_master:
+      hosts:
+        <REDIS-MASTER>:
+
+    redis_replica:
+      hosts:
+        <REDIS-REPLICA-1>:
+        <REDIS-REPLICA-N>:
+
+    redis_sentinel:
+      hosts:
+        <REDIS-SENTINEL-1>:
+        <REDIS-SENTINEL-N>:
+
+    iag5_servers:
+      hosts:
+        <IAG5-SERVER>:
+```
+
+> **&#9432; Note:** Use the private/VPC-internal IP of the Loki host for `alloy_loki_url`
+> and `grafana_loki_datasource_url`. Cloud instances cannot route to their own public IP.
+
 ### Prometheus / Grafana Inventory
 
 To install and configure Prometheus and Grafana, add `prometheus` and `grafana` groups and hosts to
@@ -394,6 +517,81 @@ all:
 ```
 
 ## Running the Playbooks
+
+### Loki / Alloy Playbooks
+
+#### Quick Start
+
+Assumes Grafana and Prometheus are already deployed. The Loki VM can be the same host as
+Grafana or a standalone server.
+
+**Step 1 — Add `loki` and `grafana` groups to your inventory**
+
+```yaml
+all:
+  vars:
+    alloy_loki_url: "http://<LOKI-PRIVATE-IP>:3100"
+
+  children:
+    loki:
+      hosts:
+        <LOKI-HOST>:
+          ansible_host: <LOKI-IP>
+
+    grafana:
+      hosts:
+        <GRAFANA-HOST>:
+          ansible_host: <GRAFANA-IP>
+      vars:
+        grafana_loki_datasource_url: "http://<LOKI-PRIVATE-IP>:3100"
+```
+
+For a single-VM dev setup, both `loki` and `grafana` can point to the same host and
+`grafana_loki_datasource_url` can be `http://localhost:3100`.
+
+**Step 2 — Deploy Loki and wire it into Grafana**
+
+```bash
+ansible-playbook itential.monitoring.loki -i <inventory>
+```
+
+This installs Loki, starts the service, and provisions the Loki datasource in Grafana in
+one run. No separate Grafana playbook step is needed.
+
+**Step 3 — Deploy Alloy to all Itential application nodes**
+
+```bash
+ansible-playbook itential.monitoring.alloy -i <inventory>
+```
+
+Log paths and OS group memberships for each host group (`platform*`, `mongodb*`,
+`redis_master`, `redis_replica`, `redis_sentinel`, `iag5_servers`, `iag5_runners`,
+`iag5_clients`) are pre-configured in the collection. No additional inventory variables
+are needed beyond `alloy_loki_url`.
+
+After both playbooks complete, open **Grafana → Explore**, select the **Loki** datasource,
+and run a query such as `{host="<hostname>"}` to verify logs are flowing.
+
+---
+
+#### Selective Execution
+
+Re-run specific phases without a full reinstall:
+
+```bash
+# Redeploy Loki config only (e.g. after changing retention)
+ansible-playbook itential.monitoring.loki -i <inventory> --tags loki_configure
+
+# Redeploy Alloy config only (e.g. after adding a new log path)
+ansible-playbook itential.monitoring.alloy -i <inventory> --tags alloy_configure
+```
+
+| Tag | Description |
+| ---- | ----------- |
+| `loki_install` | Install the Loki binary, create user/group/directories, open firewall port |
+| `loki_configure` | Deploy `loki-config.yml` and the systemd service file |
+| `alloy_install` | Install the Alloy package, configure repository, set up user groups, open firewall port |
+| `alloy_configure` | Deploy `/etc/alloy/config.alloy` |
 
 ### ELK Stack Playbooks
 
