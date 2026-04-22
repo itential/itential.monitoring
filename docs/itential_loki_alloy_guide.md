@@ -21,7 +21,6 @@
   - [Step 2 — Set the Loki Push URL](#step-2--set-the-loki-push-url)
   - [Step 3 — Deploy Loki](#step-3--deploy-loki)
   - [Step 4 — Deploy Alloy](#step-4--deploy-alloy)
-  - [Step 5 — Provision the Loki Datasource in Grafana](#step-5--provision-the-loki-datasource-in-grafana)
   - [Deploying Individual Components](#deploying-individual-components)
   - [Rerunning Specific Configuration Steps](#rerunning-specific-configuration-steps)
 - [Retention](#retention)
@@ -276,6 +275,8 @@ all:
     grafana:
       hosts:
         <LOKI-HOST>:
+      vars:
+        grafana_loki_datasource_url: "http://<LOKI-PRIVATE-IP>:3100"
 
     # Existing Itential host groups — Alloy will be deployed to these
     platform:
@@ -327,7 +328,7 @@ Run the Loki playbook to install and start the Loki server:
 ansible-playbook itential.monitoring.loki -i <inventory>
 ```
 
-This playbook:
+This playbook runs two passes:
 
 1. Creates the `loki` system user and group
 2. Downloads and installs the Loki binary from GitHub releases
@@ -335,6 +336,10 @@ This playbook:
 4. Deploys `loki-config.yml` and the systemd service file
 5. Opens port 3100 in firewalld if the service is running
 6. Starts Loki and waits for the `/ready` endpoint to respond
+7. Provisions the Loki datasource in Grafana — writes the datasource file and restarts Grafana
+
+Grafana must already be installed. `grafana_loki_datasource_url` must be set in inventory for
+the `grafana` group (see Step 1).
 
 ### Step 4 — Deploy Alloy
 
@@ -353,28 +358,6 @@ This playbook:
 5. Deploys `/etc/alloy/config.alloy` with the journal and file log source blocks
 6. Opens port 12345 in firewalld if the service is running
 7. Starts Alloy and asserts the service is active
-
-### Step 5 — Provision the Loki Datasource in Grafana
-
-The Loki playbook handles Grafana datasource provisioning automatically — no separate
-Grafana playbook run is needed. Before running the Loki playbook, set `grafana_loki_datasource_url`
-in your inventory for the `grafana` group:
-
-```yaml
-grafana:
-  hosts:
-    grafana-vm:
-      ansible_host: <GRAFANA-IP>
-  vars:
-    grafana_loki_datasource_url: "http://<LOKI-HOST-IP>:3100"
-```
-
-When you run the Loki playbook, it first installs Loki on the `loki` group, then
-automatically provisions the Loki datasource on the `grafana` group. Grafana must already
-be installed — this step only writes the datasource file and restarts Grafana.
-
-Once provisioned, the Loki datasource appears in **Grafana → Explore** and can be
-selected in any dashboard panel as a log data source.
 
 ### Deploying Individual Components
 
