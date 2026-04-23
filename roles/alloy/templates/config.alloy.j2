@@ -5,6 +5,11 @@
 loki.write "default" {
   endpoint {
     url = "{{ alloy_loki_url }}/loki/api/v1/push"
+{% if alloy_tls_enabled | bool %}
+    tls_config {
+      ca_file = "{{ alloy_tls_ca_file }}"
+    }
+{% endif %}
   }
 }
 

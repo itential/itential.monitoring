@@ -323,15 +323,20 @@ all:
 | `loki_max_entries_limit` | Integer | Max log entries returned per query | `5000` |
 | `loki_ingestion_rate_mb` | Integer | Ingestion rate limit in MB/s | `16` |
 | `loki_ingestion_burst_size_mb` | Integer | Ingestion burst size in MB | `32` |
+| `loki_tls_enabled` | Boolean | Enable TLS on the Loki HTTP listener | `false` |
+| `loki_tls_cert_file` | String | Path to the Loki server certificate file (required when `loki_tls_enabled: true`) | `/etc/loki/certs/loki.crt` |
+| `loki_tls_key_file` | String | Path to the Loki server private key file (required when `loki_tls_enabled: true`) | `/etc/loki/certs/loki.key` |
 
 ### Alloy Role Variables
 
 | Variable | Type | Description | Default Value |
 | :------- | :--- | :---------- | :------------ |
-| `alloy_loki_url` | String | Loki push endpoint URL. Set once under `all.vars` in inventory (use private/VPC IP). | `""` |
+| `alloy_loki_url` | String | Loki push endpoint URL. Set once under `all.vars` in inventory (use private/VPC IP). Use `https://` when `alloy_tls_enabled: true`. | `""` |
 | `alloy_http_listen_port` | Integer | Alloy HTTP port for metrics, health, and UI | `12345` |
 | `alloy_log_paths` | List | File-based log paths to tail. Pre-configured per host group in `playbooks/group_vars/`. Override in inventory to customise. | `[]` |
 | `alloy_extra_groups` | List | Extra OS groups to add the alloy user to for log file read access. Pre-configured for `mongodb*` and `iag5*` groups. | `[]` |
+| `alloy_tls_enabled` | Boolean | Enable TLS for the Alloy → Loki push connection | `false` |
+| `alloy_tls_ca_file` | String | Path to the CA certificate used to verify the Loki server cert (required when `alloy_tls_enabled: true`) | `/etc/alloy/certs/ca.crt` |
 
 ## Building Your Inventory
 

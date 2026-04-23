@@ -21,6 +21,8 @@ Alloy replaces Promtail — the role stops and disables the Promtail service if 
 | `alloy_service_name` | String | Systemd service name | `alloy` |
 | `alloy_log_paths` | List | File-based log paths to tail (set via group_vars) | `[]` |
 | `alloy_extra_groups` | List | Extra OS groups to add the alloy user to for log access | `[]` |
+| `alloy_tls_enabled` | Boolean | Enable TLS for the Loki push connection | `false` |
+| `alloy_tls_ca_file` | String | Path to the CA certificate used to verify the Loki server cert | `/etc/alloy/certs/ca.crt` |
 
 ## Tags
 
@@ -40,11 +42,9 @@ files are needed.
 ```yaml
 # group_vars/platform.yml
 alloy_log_paths:
-  - path: /var/log/itential/webserver.log
+  - path: /var/log/itential/platform/webserver.log
     job: iap-http
   - path: /var/log/itential/platform/*.log
-    job: iap
-  - path: /var/log/itential/platform*.log
     job: iap
 ```
 
@@ -79,6 +79,21 @@ alloy_log_paths:
     job: redis
   - path: /var/log/redis/sentinel.log
     job: redis-sentinel
+```
+
+## TLS
+
+TLS is disabled by default. To enable TLS on the Alloy → Loki push connection, set the
+following in your inventory under `all.vars`. The CA certificate must be pre-placed on
+every Alloy host before running the playbook — this role does not deploy it. `alloy_loki_url`
+must use `https://` when TLS is enabled.
+
+```yaml
+all:
+  vars:
+    alloy_tls_enabled: true
+    alloy_tls_ca_file: /etc/alloy/certs/ca.crt
+    alloy_loki_url: "https://<LOKI-PRIVATE-IP>:3100"
 ```
 
 ## Playbook

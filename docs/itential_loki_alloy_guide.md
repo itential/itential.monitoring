@@ -24,6 +24,7 @@
   - [Deploying Individual Components](#deploying-individual-components)
   - [Rerunning Specific Configuration Steps](#rerunning-specific-configuration-steps)
 - [Retention](#retention)
+- [TLS](#tls)
 - [Air-Gapped Deployments](#air-gapped-deployments)
 - [Role Reference](#role-reference)
 - [Related Documents](#related-documents)
@@ -318,7 +319,7 @@ all:
 
 > **Note:** Use the private/VPC-internal IP of the Loki host. Cloud instances cannot
 > route to their own public IP, so Alloy agents will fail to push logs if a public IP
-> is used.
+> is used. If TLS is enabled on Loki, use `https://` here — see [TLS](#tls).
 
 ### Step 3 — Deploy Loki
 
@@ -415,6 +416,87 @@ ansible-playbook itential.monitoring.loki -i <inventory> --tags loki_configure
 > configure the `compactor` retention settings in `loki-config.yml`. Refer to the
 > [Loki retention documentation](https://grafana.com/docs/loki/latest/operations/storage/retention/)
 > for details.
+
+---
+
+## TLS
+
+TLS is disabled by default on both Loki and Alloy. Enable it when Loki resides on a
+separate server from the Alloy agents and network traffic must be encrypted in transit.
+
+### What TLS Covers
+
+| Connection | Secured by |
+|---|---|
+| Alloy → Loki (log push) | `alloy_tls_enabled` + `loki_tls_enabled` |
+| Grafana → Loki (query) | Set `grafana_loki_datasource_url` to `https://` |
+
+TLS on Grafana itself and on Prometheus is not managed by this collection.
+
+### Step 1 — Pre-place Certificates
+
+This collection does not deploy certificates. Before running the playbooks, place the
+following files on the relevant hosts:
+
+**On the Loki host:**
+
+| File | Purpose |
+|---|---|
+| `/etc/loki/certs/loki.crt` | Loki server certificate (PEM) |
+| `/etc/loki/certs/loki.key` | Loki server private key (PEM) |
+
+The certificate must include the Loki host's IP or hostname as a SAN (Subject Alternative
+Name). Certificates signed by an internal CA are supported.
+
+**On every Alloy host:**
+
+| File | Purpose |
+|---|---|
+| `/etc/alloy/certs/ca.crt` | CA certificate used to verify the Loki server cert (PEM) |
+
+### Step 2 — Enable TLS in Inventory
+
+```yaml
+all:
+  vars:
+    alloy_tls_enabled: true
+    alloy_tls_ca_file: /etc/alloy/certs/ca.crt
+    alloy_loki_url: "https://<LOKI-PRIVATE-IP>:3100"
+
+loki:
+  vars:
+    loki_tls_enabled: true
+    loki_tls_cert_file: /etc/loki/certs/loki.crt
+    loki_tls_key_file: /etc/loki/certs/loki.key
+
+grafana:
+  vars:
+    grafana_loki_datasource_url: "https://<LOKI-PRIVATE-IP>:3100"
+```
+
+### Step 3 — Redeploy
+
+```bash
+ansible-playbook itential.monitoring.loki -i <inventory>
+ansible-playbook itential.monitoring.alloy -i <inventory>
+```
+
+To reconfigure only (no reinstall):
+
+```bash
+ansible-playbook itential.monitoring.loki -i <inventory> --tags loki_configure
+ansible-playbook itential.monitoring.alloy -i <inventory> --tags alloy_configure
+```
+
+### Cert Path Defaults
+
+Default cert paths can be overridden in inventory. The defaults are:
+
+| Variable | Default |
+|---|---|
+| `loki_tls_cert_file` | `/etc/loki/certs/loki.crt` |
+| `loki_tls_key_file` | `/etc/loki/certs/loki.key` |
+| `alloy_tls_ca_file` | `/etc/alloy/certs/ca.crt` |
 
 ---
 

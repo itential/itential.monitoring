@@ -26,3 +26,9 @@ loki_reject_old_samples_max_age: 168h
 loki_max_entries_limit: 5000
 loki_ingestion_rate_mb: 16
 loki_ingestion_burst_size_mb: 32
+
+# TLS — server-side TLS for the HTTP listener.
+# Certs must be pre-placed on the host; this role does not deploy them.
+loki_tls_enabled: false
+loki_tls_cert_file: /etc/loki/certs/loki.crt
+loki_tls_key_file: /etc/loki/certs/loki.key

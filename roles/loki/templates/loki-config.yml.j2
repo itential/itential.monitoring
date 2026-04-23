@@ -6,6 +6,11 @@ server:
   http_listen_port: {{ loki_http_listen_port }}
   grpc_listen_port: {{ loki_grpc_listen_port }}
   log_level: info
+{% if loki_tls_enabled | bool %}
+  http_tls_config:
+    cert_file: {{ loki_tls_cert_file }}
+    key_file: {{ loki_tls_key_file }}
+{% endif %}
 
 common:
   instance_addr: 127.0.0.1

@@ -6,4 +6,3 @@
   become: true
   roles:
     - role: itential.monitoring.alloy
-      tags: alloy_install

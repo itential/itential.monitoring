@@ -5,3 +5,5 @@
   ansible.builtin.systemd:
     name: "{{ alloy_service_name }}"
     state: restarted
+    enabled: true
+    daemon_reload: true

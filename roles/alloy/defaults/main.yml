@@ -3,7 +3,7 @@
 ---
 # Loki endpoint — all Alloy agents push here.
 # Use the private/VPC-internal IP of the Loki host.
-# When Alloy and Loki are co-located, use http://localhost:3100.
+# Use https:// when loki_tls_enabled is true on the Loki host.
 alloy_loki_url: ""
 
 # Alloy HTTP listen port (metrics, health, UI)
@@ -27,3 +27,9 @@ alloy_log_paths: []
 #   mongodb hosts:  alloy_extra_groups: [mongod]
 #   iag5 hosts:     alloy_extra_groups: [itential]
 alloy_extra_groups: []
+
+# TLS — secures the connection from Alloy to Loki.
+# alloy_loki_url must use https:// when TLS is enabled.
+# Certs must be pre-placed on the host; this role does not deploy them.
+alloy_tls_enabled: false
+alloy_tls_ca_file: /etc/alloy/certs/ca.crt

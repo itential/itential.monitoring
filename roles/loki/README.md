@@ -28,6 +28,9 @@ releases) running under a dedicated systemd service.
 | `loki_max_entries_limit` | Integer | Max entries returned per query | `5000` |
 | `loki_ingestion_rate_mb` | Integer | Ingestion rate limit in MB/s | `16` |
 | `loki_ingestion_burst_size_mb` | Integer | Ingestion burst size in MB | `32` |
+| `loki_tls_enabled` | Boolean | Enable TLS on the HTTP listener | `false` |
+| `loki_tls_cert_file` | String | Path to the server certificate file | `/etc/loki/certs/loki.crt` |
+| `loki_tls_key_file` | String | Path to the server private key file | `/etc/loki/certs/loki.key` |
 
 ## Tags
 
@@ -36,17 +39,36 @@ releases) running under a dedicated systemd service.
 | `loki_install` | Install binary, create user/group/dirs, open firewall port |
 | `loki_configure` | Deploy `loki-config.yml` and systemd service file |
 
+## TLS
+
+TLS is disabled by default. To enable server-side TLS on the Loki HTTP listener, set the
+following in your inventory for the `loki` group. Certificates must be pre-placed on the
+host before running the playbook — this role does not deploy them.
+
+```yaml
+loki:
+  vars:
+    loki_tls_enabled: true
+    loki_tls_cert_file: /etc/loki/certs/loki.crt
+    loki_tls_key_file: /etc/loki/certs/loki.key
+```
+
+When TLS is enabled, all clients connecting to port `{{ loki_http_listen_port }}` must use
+HTTPS. Update `alloy_loki_url` to `https://<LOKI-HOST-IP>:3100` and `grafana_loki_datasource_url`
+to `https://<LOKI-HOST-IP>:3100` in your inventory accordingly.
+
 ## Grafana Integration
 
 After deploying Loki, enable the Loki datasource in Grafana by setting the following in your
 inventory (on the `grafana` host group vars):
 
 ```yaml
-loki_datasource_enabled: true
-loki_datasource_url: "http://<LOKI-HOST-IP>:3100"
+grafana_loki_datasource_enabled: true
+grafana_loki_datasource_url: "http://<LOKI-HOST-IP>:3100"
 ```
 
-Then re-run the Grafana playbook to provision the datasource.
+Then re-run the Loki playbook — the second play provisions the datasource in Grafana
+automatically. Use `https://` if TLS is enabled on Loki.
 
 ## Inventory
 

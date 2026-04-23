@@ -25,7 +25,7 @@ standalone server.
   handlers. The service file notifies both `Reload systemd` and `Restart Loki` so daemon-reload
   runs before the restart.
 - **`always`** — flushes handlers, ensures the service is started and enabled, asserts
-  `ActiveState == active`, then polls `http://localhost:{{ loki_http_listen_port }}/ready`
+  `ActiveState == active`, then polls `localhost:{{ loki_http_listen_port }}/ready` (HTTPS when `loki_tls_enabled`)
   with 12 retries (5s delay) before declaring success.
 
 ## Binary install
