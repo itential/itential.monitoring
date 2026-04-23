@@ -90,7 +90,7 @@
       environment:
         LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
       register: logstash_keystore_create
-      failed_when: logstash_keystore_add.rc != 0 or 'ERROR' in logstash_keystore_add.stdout
+      failed_when: logstash_keystore_create.rc != 0 or 'ERROR' in logstash_keystore_create.stdout
       changed_when: "'Created Logstash keystore' in logstash_keystore_create.stdout"
       when: not logstash_keystore_stat.stat.exists
 
