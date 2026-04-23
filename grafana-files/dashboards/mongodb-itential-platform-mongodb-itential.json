@@ -1,0 +1,5689 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "mongodb-itential-platform",
+    "url": "/d/mongodb-itential/mongodb-itential-platform",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2025-12-20T15:21:18-05:00",
+    "updated": "2025-12-29T20:02:54-05:00",
+    "updatedBy": "steven.schattenberg@itential.com",
+    "createdBy": "steven.schattenberg@itential.com",
+    "version": 25,
+    "hasAcl": false,
+    "isFolder": false,
+    "apiVersion": "v0alpha1",
+    "folderId": 118,
+    "folderUid": "ff7kh98tmxtz4a",
+    "folderTitle": "production",
+    "folderUrl": "/dashboards/f/ff7kh98tmxtz4a/production",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Displays metric panels for MongoDB and Itential.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": 123,
+    "links": [],
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 131,
+        "panels": [],
+        "title": "General Health",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 1
+        },
+        "id": 127,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "(1 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\", instance=~\"${hostname}:${nodePort}\"}[5m]))) * 100",
+            "instant": false,
+            "legendFormat": "{{hostname}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "CPU",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "MongoDB instance uptime",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "fixed"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 3600
+                },
+                {
+                  "color": "green",
+                  "value": 86400
+                }
+              ]
+            },
+            "unit": "s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 6,
+          "x": 12,
+          "y": 1
+        },
+        "id": 28,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "mongodb_ss_uptime{instance=~\"$instance\"}",
+            "legendFormat": "{{instance}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Instance Uptime",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 80
+                },
+                {
+                  "color": "red",
+                  "value": 90
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 6,
+          "x": 18,
+          "y": 1
+        },
+        "id": 130,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "((node_memory_MemTotal_bytes{instance=~\"${hostname}:${nodePort}\"} - node_memory_MemAvailable_bytes{instance=~\"${hostname}:${nodePort}\"}) / node_memory_MemTotal_bytes{instance=~\"${hostname}:${nodePort}\"}) * 100\n",
+            "instant": true,
+            "legendFormat": "{{instance}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Memory",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "The current number of connections to this database",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "Available.*"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 6,
+          "x": 12,
+          "y": 6
+        },
+        "id": 107,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "expr": "mongodb_ss_connections{instance=~\"$instance\", conn_type=\"current\"}",
+            "legendFormat": "Available - {{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Current Connections",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 6,
+          "x": 18,
+          "y": 6
+        },
+        "id": 129,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "(1 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\", instance=~\"${hostname}:${nodePort}\"}[5m]))) * 100",
+            "instant": true,
+            "legendFormat": "{{hostname}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "CPU",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 80
+                },
+                {
+                  "color": "red",
+                  "value": 90
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 9
+        },
+        "id": 128,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "((node_memory_MemTotal_bytes{instance=~\"${hostname}:${nodePort}\"} - node_memory_MemAvailable_bytes{instance=~\"${hostname}:${nodePort}\"}) / node_memory_MemTotal_bytes{instance=~\"${hostname}:${nodePort}\"}) * 100\n",
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Memory",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "The current number of active connections to this database",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "Available.*"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 11
+        },
+        "id": 108,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "expr": "mongodb_ss_connections{instance=~\"$instance\", conn_type=\"active\"}",
+            "legendFormat": "Available - {{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Active Connections",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "The maximum number of connections available to this database",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "Available.*"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 11
+        },
+        "id": 6,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "mongodb_ss_connections{instance=~\"$instance\", conn_type=\"available\"}",
+            "legendFormat": "Available - {{instance}}",
+            "refId": "B"
+          }
+        ],
+        "title": "Max Connections",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "MongoDB status",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "fixed"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "DOWN"
+                  },
+                  "1": {
+                    "text": "UP"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 6,
+          "x": 12,
+          "y": 15
+        },
+        "id": 122,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "mongodb_up{instance=~\"$instance\"}",
+            "legendFormat": "{{instance}}",
+            "refId": "A"
+          }
+        ],
+        "title": "MongoDB Status",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "MongoDB exporter scrape success",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "fixed"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "DOWN"
+                  },
+                  "1": {
+                    "text": "UP"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 6,
+          "x": 18,
+          "y": 15
+        },
+        "id": 29,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "expr": "up{instance=~\"$instance\",job=\"mongo_exporter\"}",
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "MongoDB Exporter Status",
+        "type": "stat"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 17
+        },
+        "id": 100,
+        "panels": [],
+        "title": "Cluster Health Overview",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "Current state of replica set members",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "left",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false,
+              "styleField": "Max"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "STARTUP"
+                  },
+                  "1": {
+                    "text": "PRIMARY"
+                  },
+                  "10": {
+                    "text": "REMOVED"
+                  },
+                  "2": {
+                    "text": "SECONDARY"
+                  },
+                  "3": {
+                    "text": "RECOVERING"
+                  },
+                  "5": {
+                    "text": "STARTUP2"
+                  },
+                  "6": {
+                    "text": "UNKNOWN"
+                  },
+                  "7": {
+                    "text": "ARBITER"
+                  },
+                  "8": {
+                    "text": "DOWN"
+                  },
+                  "9": {
+                    "text": "ROLLBACK"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                },
+                {
+                  "color": "green",
+                  "value": 2
+                },
+                {
+                  "color": "yellow",
+                  "value": 3
+                },
+                {
+                  "color": "red",
+                  "value": 8
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 18
+        },
+        "id": 1,
+        "options": {
+          "cellHeight": "lg",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Field"
+            }
+          ]
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "mongodb_rs_members_state{instance=~\"$instance\"}",
+            "instant": true,
+            "legendFormat": "{{member_idx}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Replica Set Member Status",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {}
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "includeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "Field": "Instance Name",
+                "Max": "Replicaset Role"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Displays the priority settings for this replica set.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "left",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 12,
+          "y": 18
+        },
+        "id": 121,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "mongodb_rs_cfg_members_priority{instance=\"${instance}\"}",
+            "format": "table",
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Replicaset Priority",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true,
+                "__name__": true,
+                "cl_id": true,
+                "instance": true,
+                "job": true,
+                "rs_nm": true,
+                "rs_state": true
+              },
+              "includeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "member_idx": ""
+              }
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "The mongodb_rs_members_pingMs metric measures network round-trip latency in milliseconds between the primary MongoDB node and each replica set member. Monitoring this is critical because high ping times directly impact replication lag—if members can't communicate quickly, secondary nodes fall behind, increasing data loss risk during failovers and consuming your oplog window faster.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 10
+                },
+                {
+                  "color": "red",
+                  "value": 50
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [
+              "last",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "none",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "expr": "mongodb_rs_members_pingMs{instance=~\"$instance\"}",
+            "legendFormat": "{{member_idx}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Replication Ping Time",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "The mongodb_rs_term metric represents the current election term number in your MongoDB replica set—a monotonically increasing integer that increments each time a new primary is elected. This is crucial for monitoring because sudden increases indicate a failover event has occurred, allowing you to track replica set stability and detect unexpected primary elections. If you see the term number jumping frequently, it signals instability in your cluster (network partitions, node failures, or configuration issues). You should alert on term changes to immediately investigate failovers, and correlate term increases with other metrics like oplog window consumption and replication lag to understand the health impact. A stable replica set maintains the same term number for extended periods, while frequent term changes indicate reliability problems requiring urgent attention",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "stepAfter",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 24
+        },
+        "id": 5,
+        "options": {
+          "legend": {
+            "calcs": [
+              "last"
+            ],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "expr": "mongodb_rs_term{instance=~\"$instance\"}",
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Replica Set Term (Elections)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "Measures the MongoDB oplog window in seconds - the time span of replication history available for replica set members to catch up if they fall behind. Critical for Itential's high-availability architecture as it determines how long a secondary can be offline or lagging before requiring a full resync. Typical healthy value is 4+ hours; values below 2 hours indicate potential replication risk.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 7200
+                },
+                {
+                  "color": "green",
+                  "value": 14400
+                }
+              ]
+            },
+            "unit": "s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 24
+        },
+        "id": 3,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "editorMode": "code",
+            "expr": "(mongodb_ss_oplog_latestOptime{instance=~\"$instance\"} - mongodb_ss_oplog_earliestOptime{instance=~\"$instance\"}) / 1000",
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Oplog Window",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "The rate at which common DB commands are failing",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 32
+        },
+        "id": 119,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(mongodb_ss_metrics_commands_find_failed{instance=~\"$instance\"}[5m])\n",
+            "instant": false,
+            "legendFormat": "Find Failures",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(mongodb_ss_metrics_commands_insert_failed{instance=~\"$instance\"}[5m])\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Insert Failures",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(mongodb_ss_metrics_commands_update_failed{instance=~\"$instance\"}[5m])\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Update Failures",
+            "range": true,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(mongodb_ss_metrics_commands_delete_failed{instance=~\"$instance\"}[5m])\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Delete Failures",
+            "range": true,
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(mongodb_ss_metrics_commands_aggregate_failed{instance=\"$instance\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Aggregate Failures",
+            "range": true,
+            "refId": "E"
+          }
+        ],
+        "title": "Command Failures",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Tracks the rate of write operations (inserts, updates, deletes) per hour. High write rates consume oplog space faster, reducing your oplog window. For Itential, spikes in this metric during heavy workflow execution indicate increased oplog pressure.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 32
+        },
+        "id": 120,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "sum(rate(mongodb_ss_opcounters{instance=~\"$instance\", legacy_op_type=~\"insert|update|delete\"}[5m])) * 3600\n",
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Oplog Growth Rate (Bytes per Hour)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 9,
+          "x": 0,
+          "y": 40
+        },
+        "id": 136,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "mongodb_oplog_stats_storageStats_size{instance=~\"$instance\"}\n",
+            "instant": true,
+            "legendFormat": "Max Size",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Oplog Current Size",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 8,
+          "x": 9,
+          "y": 40
+        },
+        "id": 135,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "mongodb_oplog_stats_storageStats_maxSize{instance=~\"$instance\"}",
+            "instant": true,
+            "legendFormat": "Max Size",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Oplog Max Size",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "The amount of oplog in use, current vs max allotted size.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 7,
+          "x": 17,
+          "y": 40
+        },
+        "id": 137,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "(mongodb_oplog_stats_storageStats_size{instance=~\"$instance\"} / mongodb_oplog_stats_storageStats_maxSize{instance=~\"$instance\"}) * 100\n",
+            "instant": true,
+            "legendFormat": "Max Size",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Oplog Size In Use",
+        "type": "stat"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 43
+        },
+        "id": 113,
+        "panels": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The top 10 Collections with the highest average document size.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 12,
+              "w": 17,
+              "x": 0,
+              "y": 174
+            },
+            "id": 134,
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "exemplar": false,
+                "expr": "topk(10, (mongodb_collstats_storageStats_size{instance=\"${instance}\"} / mongodb_collstats_storageStats_count{instance=\"${instance}\"}))\n",
+                "format": "table",
+                "instant": true,
+                "legendFormat": "__auto",
+                "range": false,
+                "refId": "A"
+              }
+            ],
+            "title": "Top 10 Collections Average Object Size",
+            "transformations": [
+              {
+                "id": "organize",
+                "options": {
+                  "excludeByName": {
+                    "Time": true,
+                    "cl_id": true,
+                    "collection": false,
+                    "instance": true,
+                    "job": true,
+                    "rs_nm": true,
+                    "rs_state": true
+                  },
+                  "includeByName": {},
+                  "indexByName": {},
+                  "renameByName": {
+                    "Value": "Average Size",
+                    "collection": "Collection",
+                    "database": "Database"
+                  }
+                }
+              },
+              {
+                "id": "sortBy",
+                "options": {}
+              }
+            ],
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The distribution of collection size ",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "mappings": [],
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 12,
+              "w": 7,
+              "x": 17,
+              "y": 174
+            },
+            "id": 125,
+            "options": {
+              "displayLabels": [
+                "name"
+              ],
+              "legend": {
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "values": [
+                  "percent"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "sort": "desc",
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "topk(10, mongodb_collstats_storageStats_size{instance=~\"${instance}\",database=\"${database}\"})",
+                "instant": false,
+                "legendFormat": "{{collection}}",
+                "range": true,
+                "refId": "A"
+              }
+            ],
+            "title": "Collection Size",
+            "type": "piechart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The top 10 collections by number of records.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 12,
+              "w": 17,
+              "x": 0,
+              "y": 186
+            },
+            "id": 112,
+            "options": {
+              "cellHeight": "sm",
+              "frameIndex": 1,
+              "showHeader": true
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "exemplar": false,
+                "expr": "topk(10, mongodb_collstats_storageStats_count{instance=~\"$instance\"})",
+                "instant": true,
+                "legendFormat": "{{database}}.{{collection}}",
+                "range": false,
+                "refId": "A"
+              }
+            ],
+            "title": "Top 10 Collections by Document Count",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "lastNotNull"
+                  ]
+                }
+              },
+              {
+                "id": "organize",
+                "options": {
+                  "excludeByName": {},
+                  "includeByName": {},
+                  "indexByName": {},
+                  "renameByName": {
+                    "Field": "Collection Name",
+                    "Last *": "Document Count"
+                  }
+                }
+              }
+            ],
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The distribution of indexes ",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "mappings": [],
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 12,
+              "w": 7,
+              "x": 17,
+              "y": 186
+            },
+            "id": 126,
+            "options": {
+              "displayLabels": [
+                "name"
+              ],
+              "legend": {
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "values": [
+                  "percent"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "sort": "desc",
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "topk(10, mongodb_collstats_storageStats_indexSizes{instance=~\"$instance\",database=\"${database}\"})",
+                "instant": false,
+                "legendFormat": "{{collection}}",
+                "range": true,
+                "refId": "A"
+              }
+            ],
+            "title": "Index Size",
+            "type": "piechart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The top 10 collections by size.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "fillOpacity": 80,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "lineWidth": 1,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 198
+            },
+            "id": 110,
+            "options": {
+              "barRadius": 0,
+              "barWidth": 0.97,
+              "fullHighlight": false,
+              "groupWidth": 0.7,
+              "legend": {
+                "calcs": [],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true
+              },
+              "orientation": "vertical",
+              "showValue": "always",
+              "stacking": "none",
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              },
+              "xField": "Time",
+              "xTickLabelRotation": 0,
+              "xTickLabelSpacing": 100
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "exemplar": false,
+                "expr": "topk(10, mongodb_collstats_storageStats_size{instance=~\"$instance\"})\n",
+                "format": "time_series",
+                "instant": true,
+                "legendFormat": "{{database}}.{{collection}}",
+                "range": false,
+                "refId": "A"
+              }
+            ],
+            "title": "Top 10 Collections by Size",
+            "type": "barchart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The top 10 indexes by size.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "fillOpacity": 80,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "lineWidth": 1,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 198
+            },
+            "id": 111,
+            "options": {
+              "barRadius": 0,
+              "barWidth": 0.97,
+              "fullHighlight": false,
+              "groupWidth": 0.7,
+              "legend": {
+                "calcs": [],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true
+              },
+              "orientation": "vertical",
+              "showValue": "always",
+              "stacking": "none",
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              },
+              "xField": "Time",
+              "xTickLabelRotation": 0,
+              "xTickLabelSpacing": 100
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "exemplar": false,
+                "expr": "topk(10, mongodb_collstats_storageStats_indexSizes{instance=~\"$instance\"})\n",
+                "format": "time_series",
+                "instant": true,
+                "legendFormat": "{{database}}.{{collection}}",
+                "range": false,
+                "refId": "A"
+              }
+            ],
+            "title": "Top 10 Indexes by Size",
+            "type": "barchart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The growth by number of documents of the principal job and task collections over time.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 40,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": 0,
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 207
+            },
+            "id": 116,
+            "options": {
+              "legend": {
+                "calcs": [],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"jobs\"}",
+                "instant": false,
+                "legendFormat": "{{database}}.jobs",
+                "range": true,
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"job_data\"}",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_data",
+                "range": true,
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"job_data.chunks\"}",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_data.chunks",
+                "range": true,
+                "refId": "C"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"job_data.files\"}",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_data.files",
+                "range": true,
+                "refId": "D"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"job_history\"}",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_history",
+                "range": true,
+                "refId": "E"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"job_output\"}",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_output",
+                "range": true,
+                "refId": "F"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_collstats_storageStats_count{instance=~\"$instance\", database=~\"$database\", collection=\"tasks\"}",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.tasks",
+                "range": true,
+                "refId": "G"
+              }
+            ],
+            "title": "Job & Task Collections Document Count",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "The growth rate by size of the principal job and task collections over time.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 40,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": 0,
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 207
+            },
+            "id": 115,
+            "options": {
+              "legend": {
+                "calcs": [],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"jobs\"}[5m]) * 60",
+                "instant": false,
+                "legendFormat": "{{database}}.jobs",
+                "range": true,
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"job_data\"}[5m]) * 60",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_data",
+                "range": true,
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"job_data.chunks\"}[5m]) * 60",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_data.chunks",
+                "range": true,
+                "refId": "C"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"job_data.files\"}[5m]) * 60",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_data.files",
+                "range": true,
+                "refId": "D"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"job_history\"}[5m]) * 60",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_history",
+                "range": true,
+                "refId": "E"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"job_output\"}[5m]) * 60",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.job_output",
+                "range": true,
+                "refId": "F"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_collstats_storageStats_size{instance=~\"$instance\", database=~\"$database\", collection=\"tasks\"}[5m]) * 60",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "{{database}}.tasks",
+                "range": true,
+                "refId": "G"
+              }
+            ],
+            "title": "Job & Task Collections Size Rate",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Collection Stats",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 44
+        },
+        "id": 101,
+        "panels": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Tracks maximum available connections, currently open connections, and actively executing connections. Exhausting available connections prevents new clients from connecting. High active counts suggest slow queries holding connections. Thresholds: Warning if current > 80% of available; Critical if > 95%; Alert if active connections > 50% of current for sustained periods.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 100
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 213
+            },
+            "id": 8,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_ss_connections{instance=~\"$instance\", conn_type=\"current\"}",
+                "legendFormat": "Total - {{instance}}",
+                "range": true,
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_globalLock_activeClients{instance=~\"$instance\", count_type=\"readers\"}",
+                "legendFormat": "Readers - {{instance}}",
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_globalLock_activeClients{instance=~\"$instance\", count_type=\"writers\"}",
+                "legendFormat": "Writers - {{instance}}",
+                "refId": "C"
+              }
+            ],
+            "title": "Active Client Connections",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Operations per second by type, showing your workload profile. Sudden spikes indicate application changes or issues; sustained high rates consume resources and oplog space faster. Important for capacity planning and detecting abnormal application behavior. Thresholds: Establish baseline for your workload; Alert on > 200% of normal baseline; Track write operations specifically as they impact oplog consumption.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "ops"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 213
+            },
+            "id": 7,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_opcounters{instance=~\"$instance\", legacy_op_type=\"query\"}[5m])",
+                "legendFormat": "Query - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_opcounters{instance=~\"$instance\", legacy_op_type=\"insert\"}[5m])",
+                "legendFormat": "Insert - {{instance}}",
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_opcounters{instance=~\"$instance\", legacy_op_type=\"update\"}[5m])",
+                "legendFormat": "Update - {{instance}}",
+                "refId": "C"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_opcounters{instance=~\"$instance\", legacy_op_type=\"delete\"}[5m])",
+                "legendFormat": "Delete - {{instance}}",
+                "refId": "D"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_opcounters{instance=~\"$instance\", legacy_op_type=\"command\"}[5m])",
+                "legendFormat": "Command - {{instance}}",
+                "refId": "E"
+              }
+            ],
+            "title": "Operations Per Second",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "Number of operations currently waiting in the ingress queue for execution tickets. High or sustained queue lengths indicate slow queries holding execution tickets, causing new operations to back up. Values consistently above 10 suggest performance issues requiring investigation. A healthy system typically shows 0-5 queued operations.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 5
+                    },
+                    {
+                      "color": "red",
+                      "value": 20
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 4,
+              "x": 0,
+              "y": 221
+            },
+            "id": 124,
+            "options": {
+              "minVizHeight": 75,
+              "minVizWidth": 75,
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showThresholdLabels": false,
+              "showThresholdMarkers": true,
+              "sizing": "auto"
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_ss_queues_ingress_normalPriority_queueLength{instance=\"${instance}\"}",
+                "instant": false,
+                "legendFormat": "__auto",
+                "range": true,
+                "refId": "A"
+              }
+            ],
+            "title": "MongoDB Operations Queue Length",
+            "type": "gauge"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "Operations waiting for global locks. High counts indicate contention from slow queries blocking resources. Differs from ingress queue—this is specifically lock-related blocking. Thresholds: Warning if total > 5; Critical if > 10; Alert separately on readers vs writers to identify read or write-heavy contention.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 10
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 8,
+              "x": 4,
+              "y": 221
+            },
+            "id": 123,
+            "options": {
+              "minVizHeight": 75,
+              "minVizWidth": 75,
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showThresholdLabels": false,
+              "showThresholdMarkers": true,
+              "sizing": "auto"
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "exemplar": false,
+                "expr": "mongodb_ss_globalLock_currentQueue{instance=\"${instance}\"}",
+                "instant": true,
+                "legendFormat": "{{count_type}}",
+                "range": false,
+                "refId": "A"
+              }
+            ],
+            "title": "Global Lock Queue",
+            "type": "gauge"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Currently executing operations holding locks. High sustained counts suggest many concurrent slow operations. Useful for understanding concurrency patterns and identifying when you're hitting concurrency limits. Thresholds: Establish baseline; Alert if readers or writers > 150% of normal baseline indicating unusual concurrency or slow operations.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 10
+                    },
+                    {
+                      "color": "red",
+                      "value": 50
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 221
+            },
+            "id": 9,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_globalLock_currentQueue{instance=~\"$instance\", count_type=\"total\"}",
+                "legendFormat": "Total - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_globalLock_currentQueue{instance=~\"$instance\", count_type=\"readers\"}",
+                "legendFormat": "Readers - {{instance}}",
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_globalLock_currentQueue{instance=~\"$instance\", count_type=\"writers\"}",
+                "legendFormat": "Writers - {{instance}}",
+                "refId": "C"
+              }
+            ],
+            "title": "Queued Operations",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Connections & Operations",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 45
+        },
+        "id": 102,
+        "panels": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Average operation latency in microseconds. High latencies indicate slow queries, resource contention, or insufficient indexes. Directly impacts application response times and user experience. Thresholds: Warning if reads > 50000µs (50ms); Critical if > 100000µs (100ms); Warning if writes > 100000µs (100ms); Critical if > 500000µs (500ms).",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 100000
+                    },
+                    {
+                      "color": "red",
+                      "value": 500000
+                    }
+                  ]
+                },
+                "unit": "µs"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 385
+            },
+            "id": 10,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_ss_opLatencies_latency{instance=~\"$instance\", op_type=\"reads\"}[5m]) / rate(mongodb_ss_opLatencies_ops{instance=~\"$instance\", op_type=\"reads\"}[5m])",
+                "legendFormat": "Read Latency - {{instance}}",
+                "range": true,
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_ss_opLatencies_latency{instance=~\"$instance\", op_type=\"writes\"}[5m]) / rate(mongodb_ss_opLatencies_ops{instance=~\"$instance\", op_type=\"writes\"}[5m])",
+                "legendFormat": "Write Latency - {{instance}}",
+                "range": true,
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "editorMode": "code",
+                "expr": "rate(mongodb_ss_opLatencies_latency{instance=~\"$instance\", op_type=\"commands\"}[5m]) / rate(mongodb_ss_opLatencies_ops{instance=~\"$instance\", op_type=\"commands\"}[5m])",
+                "legendFormat": "Command Latency - {{instance}}",
+                "range": true,
+                "refId": "C"
+              }
+            ],
+            "title": "Operation Latency (Average)",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Ratio of documents examined vs. returned. High ratios indicate missing indexes or inefficient queries scanning more data than necessary. Impacts query performance and resource utilization. Thresholds: Warning if ratio > 5:1 (scanning 5x more than returning); Critical if > 10:1; Optimal is close to 1:1 with proper indexes.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 5
+                    },
+                    {
+                      "color": "red",
+                      "value": 10
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 385
+            },
+            "id": 11,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_metrics_queryExecutor_scannedObjects{instance=~\"$instance\"}[5m]) / (rate(mongodb_ss_metrics_queryExecutor_scanned{instance=~\"$instance\"}[5m]) + 1)",
+                "legendFormat": "Scan Ratio - {{instance}}",
+                "refId": "A"
+              }
+            ],
+            "title": "Document Scanned vs Returned Ratio",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Ratio of documents examined vs. returned. High ratios indicate missing indexes or inefficient queries scanning more data than necessary. Impacts query performance and resource utilization. Thresholds: Warning if ratio > 5:1 (scanning 5x more than returning); Critical if > 10:1; Optimal is close to 1:1 with proper indexes.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 393
+            },
+            "id": 12,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_metrics_queryExecutor_scannedObjects{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Scanned - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_metrics_queryExecutor_scanned{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Returned - {{instance}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Documents Scanned vs Returned",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Number of open cursors. Sudden spikes indicate queries not being properly closed or very slow aggregations. High counts consume memory and can indicate application cursor leaks. Thresholds: Warning if total > 5000; Critical if > 10000; Alert on sustained increases indicating cursor leak; Monitor pinned cursors separately as they hold resources.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 5000
+                    },
+                    {
+                      "color": "red",
+                      "value": 10000
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 393
+            },
+            "id": 13,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_metrics_cursor_open{instance=~\"$instance\", csr_type=\"total\"}",
+                "legendFormat": "Total Cursors - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_metrics_cursor_open{instance=~\"$instance\", csr_type=\"pinned\"}",
+                "legendFormat": "Pinned Cursors - {{instance}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Open Cursors",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Query Performance",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 46
+        },
+        "id": 103,
+        "panels": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Current WiredTiger cache usage. Cache should be well-utilized but not constantly full (which causes excessive evictions). Low utilization may indicate working set fits in cache; consistently at maximum indicates you may need more memory. Thresholds: Monitor as percentage of max; Warning if > 85% of maximum; Critical if > 95%; combined with high eviction rates indicates memory pressure.\n\nAmount of modified data in cache not yet written to disk. High dirty cache during heavy write workloads is normal, but if it stays near maximum, checkpoints may struggle to keep up. Thresholds: Warning if > 50% of total cache; Critical if > 75%; Combined with checkpoint delays indicates write performance issues.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 20,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.8
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.9
+                    }
+                  ]
+                },
+                "unit": "bytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 215
+            },
+            "id": 14,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_wt_cache_bytes_currently_in_the_cache{instance=~\"$instance\"}",
+                "legendFormat": "Cache Used - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_wt_cache_tracked_dirty_bytes_in_the_cache{instance=~\"$instance\"}",
+                "legendFormat": "Cache Dirty - {{instance}}",
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_wt_cache_maximum_bytes_configured{instance=~\"$instance\"}",
+                "legendFormat": "Cache Max - {{instance}}",
+                "refId": "C"
+              }
+            ],
+            "title": "WiredTiger Cache Usage",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Rate of cache evictions. Some eviction is normal as working set changes, but high sustained eviction rates indicate cache is too small for your working set. Impacts performance as queries hit disk instead of cache. Thresholds: Monitor rate; Warning if evicting > 1000 pages/sec sustained; Critical if > 5000 pages/sec; Investigate if modified page evictions are high (indicates writes overwhelming cache).",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 215
+            },
+            "id": 16,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_wt_cache_modified_pages_evicted{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Evicted Modified - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_wt_cache_unmodified_pages_evicted{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Evicted Unmodified - {{instance}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Cache Evictions",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Memory usage in MB. Resident is actual RAM used; virtual includes memory-mapped files. Resident growing to system limits causes OOM kills. Important for capacity planning and detecting memory leaks. Thresholds: Warning if resident > 80% of available system RAM; Critical if > 90%; Alert on unexpected growth patterns indicating potential memory leaks.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 20,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "decmbytes"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 223
+            },
+            "id": 17,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_mem_resident{instance=~\"$instance\"}",
+                "legendFormat": "Resident - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_mem_virtual{instance=~\"$instance\"}",
+                "legendFormat": "Virtual - {{instance}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Memory Usage",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Rate of page faults indicating working set exceeds available memory, causing disk I/O. High page faults severely degrade performance. Critical indicator that you need more RAM or have inefficient queries. Thresholds: Warning if > 10 page faults/sec; Critical if > 100 page faults/sec; Sustained page faults indicate memory pressure requiring immediate attention.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 100
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 223
+            },
+            "id": 15,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_extra_info_page_faults{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Page Faults - {{instance}}",
+                "refId": "A"
+              }
+            ],
+            "title": "Page Faults",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Memory & Cache",
+        "type": "row"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 47
+        },
+        "id": 104,
+        "panels": [],
+        "title": "Storage & Disk",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Disk space of `/var/lib/mongo`, used vs available.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "bits"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 3,
+          "x": 0,
+          "y": 48
+        },
+        "id": 132,
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "sort": "desc",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "node_filesystem_size_bytes{instance=~\"${hostname}:${nodePort}\", mountpoint=\"/var/lib/mongo\", fstype!~\"tmpfs|devtmpfs|overlay\"} - node_filesystem_avail_bytes{instance=~\"${hostname}:${nodePort}\", mountpoint=\"/var/lib/mongo\", fstype!~\"tmpfs|devtmpfs|overlay\"}",
+            "instant": false,
+            "legendFormat": "Used Space",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "node_filesystem_avail_bytes{instance=~\"${hostname}:${nodePort}\", mountpoint=\"/var/lib/mongo\", fstype!~\"tmpfs|devtmpfs|overlay\"}",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Free Space",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Disk Space",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "Total data size per database in bytes. Tracks database growth for capacity planning. Sudden increases may indicate data ingestion issues or lack of cleanup. Important for predicting when you'll need additional storage. Thresholds: Set based on available disk space; Warning at 70% capacity; Critical at 85%; Monitor growth rate to predict capacity exhaustion.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 9,
+          "x": 3,
+          "y": 48
+        },
+        "id": 18,
+        "options": {
+          "legend": {
+            "calcs": [
+              "last"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "mongodb_dbstats_dataSize{instance=~\"$instance\", database=~\"$database\"}",
+            "legendFormat": "{{database}} - {{instance}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Database Data Size",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "The percentage of disk space consumed over time.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 1,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 48
+        },
+        "id": 133,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "(1 - (node_filesystem_avail_bytes{instance=~\"${hostname}:${nodePort}\", mountpoint=~\"/var/lib/mongo\", fstype!~\"tmpfs|devtmpfs|overlay\"} / node_filesystem_size_bytes{instance=~\"${hostname}:${nodePort}\", mountpoint=~\"/var/lib/mongo\", fstype!~\"tmpfs|devtmpfs|overlay\"})) * 100",
+            "instant": false,
+            "legendFormat": "{{mountpoint}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Data Space Used Percentage",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "Total index size per database. Large indexes impact memory usage and performance. Index size should be proportional to data size; disproportionate index size may indicate unnecessary indexes. Thresholds: Monitor ratio to data size; Investigate if indexes > 50% of data size; Alert on unexpected growth indicating runaway index creation.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 56
+        },
+        "id": 19,
+        "options": {
+          "legend": {
+            "calcs": [
+              "last"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "mongodb_dbstats_indexSize{instance=~\"$instance\", database=~\"$database\"}",
+            "legendFormat": "{{database}} - {{instance}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Database Index Size",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "Individual collection and index sizes. Allows identifying which collections are growing fastest and consuming most space. Critical for Itential's job_data.chunks and job_output collections which can grow quickly. Thresholds: Track top 10 collections; Alert if any collection growing > 10GB/day unexpectedly; Monitor index sizes relative to data.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 56
+        },
+        "id": 21,
+        "options": {
+          "legend": {
+            "calcs": [
+              "last"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "mongodb_dbstats_collections{instance=~\"$instance\", database=~\"$database\"}",
+            "legendFormat": "{{database}} - {{instance}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Collection Count",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "Disk I/O operations per second. High reads with page faults indicate working set > cache. High writes during heavy workloads are normal but sustained high I/O may indicate suboptimal queries or insufficient cache. Thresholds: Establish baseline; Warning if > 200% of normal; Critical if approaching disk IOPS limits; Combine with latency metrics to detect I/O bottlenecks.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "iops"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 64
+        },
+        "id": 20,
+        "options": {
+          "legend": {
+            "calcs": [
+              "mean",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "rate(mongodb_ss_wt_block_manager_blocks_read{instance=~\"$instance\"}[5m])",
+            "legendFormat": "Blocks Read - {{instance}}",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "expr": "rate(mongodb_ss_wt_block_manager_blocks_written{instance=~\"$instance\"}[5m])",
+            "legendFormat": "Blocks Written - {{instance}}",
+            "refId": "B"
+          }
+        ],
+        "title": "Disk IOPS",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "I/O Wait Percentage",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 64
+        },
+        "id": 138,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "avg by (instance) (rate(node_cpu_seconds_total{mode=\"iowait\", instance=~\"${hostname}:${nodePort}\"}[5m])) * 100",
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "I/O Wait Percentage",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 72
+        },
+        "id": 105,
+        "panels": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Transaction lifecycle metrics showing starts, commits, and rollbacks. High rollback rates indicate application errors, conflicts, or timeout issues. Important for understanding transaction health. Thresholds: Monitor rollback rate; Warning if rollbacks > 5% of commits; Critical if > 10%; Investigate causes of high rollback rates.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 103
+            },
+            "id": 24,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_wt_txn_transaction_begins{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Started - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_wt_txn_transactions_committed{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Committed - {{instance}}",
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_wt_txn_transactions_rolled_back{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Rolled Back - {{instance}}",
+                "refId": "C"
+              }
+            ],
+            "title": "Transactions",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Write conflicts when multiple transactions attempt to modify same documents. High conflicts indicate contention hotspots requiring application changes (like sharding hot documents). Impacts throughput and latency. Thresholds: Warning if > 1% of write operations encounter conflicts; Critical if > 5%; Sustained conflicts require application-level changes.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 10
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 103
+            },
+            "id": 22,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_wt_txn_update_conflicts{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Write Conflicts - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_metrics_operation_writeConflicts{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Operation Conflicts - {{instance}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Write Conflicts",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Number of active WiredTiger sessions. Each operation uses a session. Very high counts may indicate session leaks or unusual concurrency. Useful for understanding resource utilization. Thresholds: Monitor trends; Warning if > 1000 sessions; Critical if > 5000; Alert on sudden spikes indicating unusual activity or session leaks.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 3000
+                    },
+                    {
+                      "color": "red",
+                      "value": 5000
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 111
+            },
+            "id": 23,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "mongodb_ss_wt_session_open_session_count{instance=~\"$instance\"}",
+                "legendFormat": "Open Sessions - {{instance}}",
+                "refId": "A"
+              }
+            ],
+            "title": "WiredTiger Sessions",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "description": "Checkpoint duration and failures. Checkpoints write dirty data to disk—long checkpoints or failures indicate I/O bottlenecks or excessive dirty data. Failed checkpoints are critical as they prevent proper data durability. Thresholds: Warning if checkpoint > 3000ms (3 sec); Critical if > 5000ms (5 sec); Alert immediately on any failed checkpoints; Monitor max time to catch occasional spikes.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 3000
+                    },
+                    {
+                      "color": "red",
+                      "value": 5000
+                    }
+                  ]
+                },
+                "unit": "none"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 111
+            },
+            "id": 109,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "horizontal",
+              "percentChangeColorMode": "standard",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_ss_wt_checkpoint_most_recent_time_msecs{instance=~\"$instance\"}\n",
+                "instant": false,
+                "legendFormat": "Last Duration (ms)",
+                "range": true,
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_ss_wt_checkpoint_max_time_msecs{instance=~\"$instance\"}\n",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "Max Duration (ms)",
+                "range": true,
+                "refId": "B"
+              },
+              {
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "P0147FA0CB911A4EC"
+                },
+                "editorMode": "code",
+                "expr": "mongodb_ss_wt_checkpoint_total_failed_number_of_checkpoints{instance=~\"$instance\"}\n",
+                "hide": false,
+                "instant": false,
+                "legendFormat": "Failed Count",
+                "range": true,
+                "refId": "C"
+              }
+            ],
+            "title": "Checkpoint stats",
+            "type": "stat"
+          }
+        ],
+        "title": "Transactions & Concurrency",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 73
+        },
+        "id": 106,
+        "panels": [
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Network throughput in bytes per second. Sudden increases may indicate data export jobs, index builds, or application issues. High outbound traffic suggests large result sets. Important for network capacity planning. Thresholds: Establish baseline; Warning if > 200% of normal; Monitor during maintenance windows; Alert if approaching network interface limits.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "Bps"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 104
+            },
+            "id": 26,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_network_bytesIn{instance=~\"$instance\"}[5m])",
+                "legendFormat": "In - {{instance}}",
+                "refId": "A"
+              },
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "rate(mongodb_ss_network_bytesOut{instance=~\"$instance\"}[5m])",
+                "legendFormat": "Out - {{instance}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Network Throughput",
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "description": "Server assertions by type (regular, warning, msg, user, rollovers). Any asserts indicate internal MongoDB errors or warnings. Regular asserts are serious and may indicate bugs or data corruption. Thresholds: Critical alert on ANY regular asserts; Warning on msg/warning asserts; Investigate all assert increases; user asserts may indicate application issues.",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 104
+            },
+            "id": 27,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "last"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+              {
+                "datasource": {
+                  "uid": "$datasource"
+                },
+                "expr": "increase(mongodb_ss_asserts{instance=~\"$instance\"}[5m])",
+                "legendFormat": "{{assert_type}} - {{instance}}",
+                "refId": "A"
+              }
+            ],
+            "title": "Asserts",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Network & System",
+        "type": "row"
+      }
+    ],
+    "preload": false,
+    "refresh": "30s",
+    "schemaVersion": 42,
+    "tags": [
+      "mongodb",
+      "itential",
+      "database"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "Prometheus IAP",
+            "value": "Prometheus IAP"
+          },
+          "hide": 2,
+          "label": "Datasource",
+          "name": "datasource",
+          "query": "Prometheus IAP",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "datasource": "$datasource",
+          "definition": "label_values(mongodb_up, instance)",
+          "includeAll": false,
+          "label": "Instance",
+          "name": "instance",
+          "options": [],
+          "query": {
+            "query": "label_values(mongodb_up, instance)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "datasource": "$datasource",
+          "definition": "label_values(mongodb_dbstats_dataSize{instance=~\"$instance\"}, database)",
+          "includeAll": true,
+          "label": "Database",
+          "multi": true,
+          "name": "database",
+          "options": [],
+          "query": {
+            "query": "label_values(mongodb_dbstats_dataSize{instance=~\"$instance\"}, database)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "pe-mongo01",
+            "value": "pe-mongo01"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P0147FA0CB911A4EC"
+          },
+          "definition": "label_values(mongodb_up,instance)",
+          "description": "Extracts just the hostname from the label value.",
+          "hide": 2,
+          "label": "Hostname",
+          "name": "hostname",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(mongodb_up,instance)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "/^(.+):.+$/",
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "27017",
+            "value": "27017"
+          },
+          "description": "The MongoDB port",
+          "hide": 2,
+          "label": "mongoPort",
+          "name": "mongoPort",
+          "query": "27017",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "text": "9100",
+            "value": "9100"
+          },
+          "description": "The port for the node exporter",
+          "hide": 2,
+          "label": "nodePort",
+          "name": "nodePort",
+          "query": "9100",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h"
+      ]
+    },
+    "timezone": "",
+    "title": "MongoDB - Itential Platform",
+    "uid": "mongodb-itential",
+    "version": 25,
+    "weekStart": ""
+  }
+}

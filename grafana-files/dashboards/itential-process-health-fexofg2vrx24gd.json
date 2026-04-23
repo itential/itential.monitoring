@@ -1,0 +1,1331 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "itential-process-health",
+    "url": "/d/fexofg2vrx24gd/itential-process-health",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2026-02-23T15:27:38-05:00",
+    "updated": "2026-03-20T17:17:01-04:00",
+    "updatedBy": "steven.schattenberg@itential.com",
+    "createdBy": "marcos.dias@itential.com",
+    "version": 8,
+    "hasAcl": false,
+    "isFolder": false,
+    "apiVersion": "v0alpha1",
+    "folderId": 118,
+    "folderUid": "ff7kh98tmxtz4a",
+    "folderTitle": "production",
+    "folderUrl": "/dashboards/f/ff7kh98tmxtz4a/production",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Uses the process exporter data coupled with a user's choice of process selected from a dropdown menu to render metrics for the selected process.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 134,
+    "links": [],
+    "panels": [
+      {
+        "gridPos": {
+          "h": 4,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 10,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "# Metrics for ${process}\n\nThese are metrics exposed by the [process exporter](https://github.com/ncabatoff/process-exporter). To use it, select your datasource, your instance, and the process you would like to review.",
+          "mode": "markdown"
+        },
+        "pluginVersion": "12.3.3",
+        "title": "Process Metrics",
+        "type": "text"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "How long has this process group been running. This is the duration of the oldest process in the group.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 7,
+          "x": 0,
+          "y": 4
+        },
+        "id": 1,
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "time() - namedprocess_namegroup_oldest_start_time_seconds{groupname=\"$process\", instance=~\"$instance\"}",
+            "instant": true,
+            "legendFormat": "{{instance}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Uptime",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {
+              "reducers": [
+                "lastNotNull"
+              ]
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "A count of how many process groups are found, commonly referred to as \"instances\".",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 7,
+          "y": 4
+        },
+        "id": 2,
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_num_procs{groupname=\"${process}\", instance=~\"${instance}\"}",
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Instances",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {
+              "reducers": [
+                "lastNotNull"
+              ]
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 11,
+          "y": 4
+        },
+        "id": 3,
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "horizontal",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "max(\n  namedprocess_namegroup_num_threads{\n    groupname=\"$process\",\n    instance=~\"$instance\"\n  }\n)",
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Thread Count",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This metric shows the number of open file descriptors for the Application. File descriptors are handles used by processes to access:\n\n- Files on disk\n- Network sockets (TCP/UDP connections)\n- Pipes and other inter-process communication\n- Standard input/output/error streams",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "fixed"
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 15,
+          "y": 4
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "max(\n  namedprocess_namegroup_open_filedesc{\n    groupname=\"$process\",\n    instance=~\"$instance\"\n  }\n)",
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "File Descriptors",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "This displays the current CPU time metric as currently as possible. For example, the result represents CPU utilization as a decimal:\n\n- 0.5 = 50% of one CPU core\n- 1.0 = 100% of one CPU core\n- 2.3 = 230% (using 2.3 CPU cores)",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 1,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 50
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 5,
+          "x": 19,
+          "y": 4
+        },
+        "id": 13,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "max(irate(namedprocess_namegroup_cpu_seconds_total{instance=~\"${instance}\", groupname=\"${process}\", mode=\"user\"}[30s])) * 100",
+            "format": "time_series",
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Current CPU",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "These metrics show the cumulative CPU time consumed by the Application since it started, broken down by CPU mode and averaged over 30 seconds. What Each Value Means:\n\nUser Mode:\n- CPU time spent executing the application's code\n- Normal program operations, calculations, business logic\n- Time spent in user space (not kernel operations)\n\nSystem Mode:\n- CPU time spent in kernel space on behalf of this process\n- System calls, file I/O, network operations, memory management\n- OS operations requested by the application",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": true,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "Rate per second",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 7
+        },
+        "id": 12,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "timezone": [
+            "browser"
+          ],
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_cpu_seconds_total{instance=~\"${instance}\", groupname=\"${process}\"}[30s])",
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{mode}} - {{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "CPU Time",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This shows the memory usage breakdown for the application process:\n\n- Virtual Memory: The total address space allocated to the process. This includes all mapped memory regions - libraries, heap space, stack, and memory that may not be physically loaded. A large size is normal for Node.js applications.\n\n- Resident Memory: The actual physical RAM currently being used by the process. This is the \"real\" memory consumption that affects system performance.\n\n- Swapped Memory: A low or zero swapped memory indicates the system has sufficient RAM and isn't under memory pressure.\n\n- Proportional Resident: Should show the process's fair share of shared memory.\n\n- Proportional Swapped: Would show fair share of swapped shared memory.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": true,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "Memory in MiB",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 15
+        },
+        "id": 6,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "timezone": [
+            "browser"
+          ],
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_memory_bytes{memtype=\"resident\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{memtype}} - {{instance}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_memory_bytes{memtype=\"virtual\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": true,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{memtype}} - {{instance}}",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_memory_bytes{memtype=\"swapped\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{memtype}} - {{instance}}",
+            "range": true,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_memory_bytes{memtype=\"proportionalSwapped\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{memtype}} - {{instance}}",
+            "range": true,
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_memory_bytes{memtype=\"proportionalResident\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{memtype}} - {{instance}}",
+            "range": true,
+            "refId": "E"
+          }
+        ],
+        "title": "Memory Usage",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Context switches occur when the CPU stops executing one process and starts executing another. This happens when:\n\n- A process voluntarily yields control (waiting for I/O, sleeping)\n- The OS forcibly switches processes (time slice expired, higher priority process needs CPU)\n\nThe Two Types:\nVoluntary (ctxswitchtype=\"voluntary\"):\n\n- Process willingly gives up CPU (e.g., waiting for disk I/O, network response)\n- Generally indicates normal, efficient behavior\n- Higher numbers often mean the process is I/O bound\n\nNon-voluntary (ctxswitchtype=\"nonvoluntary\"):\n\n- OS forcibly preempts the process (time slice expired)\n- Can indicate CPU-bound processes or resource contention\n- Very high numbers may suggest performance issues",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": true,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "Rate per second",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 23
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "timezone": [
+            "browser"
+          ],
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_context_switches_total{ctxswitchtype=\"voluntary\", instance=~\"${instance}\", groupname=\"${process}\"}[5m])",
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{ctxswitchtype}} - {{instance}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_context_switches_total{ctxswitchtype=\"nonvoluntary\", instance=~\"${instance}\", groupname=\"${process}\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{ctxswitchtype}} - {{instance}}",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Voluntary & Nonvoluntary Context Switches",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This metric shows major page faults for the Application, and the value of 0 indicates the process has experienced zero major page faults since it started. Page faults are when a process tries to access memory that isn't currently in physical RAM. There are two types:\n\n- Minor page fault: Memory exists but isn't mapped to the process (quick fix)\n- Major page fault: Memory must be loaded from disk storage (slow operation)\n\n0 major page faults indicates:\n- The process hasn't needed to load memory pages from disk\n- All required memory has stayed in physical RAM\n- No swapping to disk has occurred for this process\n- Generally indicates good memory management\n\nMajor page faults are expensive because:\n- Disk I/O is ~1000x slower than RAM access\n- Can cause performance hiccups\n- May indicate memory pressure or swap usage",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": true,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "Rate per second",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 24,
+          "x": 0,
+          "y": 31
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "timezone": [
+            "browser"
+          ],
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_major_page_faults_total{instance=~\"${instance}\", groupname=\"${process}\"}[5m])",
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "Major Page Faults - {{instance}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_minor_page_faults_total{instance=~\"${instance}\", groupname=\"${process}\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "Minor Page Faults - {{instance}}",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Major & Minor Page Faults",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This metric shows the number of processes in \"Other\" state for the Application\nThe process states are:\n\n- Running: Currently executing on CPU\n- Sleeping: Waiting for I/O or events\n- Stopped: Suspended (e.g., by SIGSTOP)\n- Zombie: Terminated but not yet cleaned up by parent\n- Other: Any other process states not in the above categories",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": true,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 24,
+          "x": 0,
+          "y": 40
+        },
+        "id": 9,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "timezone": [
+            "browser"
+          ],
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_states{state=\"Running\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{state}} - {{instance}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_states{state=\"Sleeping\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{state}} - {{instance}}",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_states{state=\"Waiting\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{state}} - {{instance}}",
+            "range": true,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_states{state=\"Zombie\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{state}} - {{instance}}",
+            "range": true,
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "namedprocess_namegroup_states{state=\"Other\", instance=~\"${instance}\", groupname=\"${process}\"}",
+            "hide": false,
+            "instant": false,
+            "interval": "1",
+            "legendFormat": "{{state}} - {{instance}}",
+            "range": true,
+            "refId": "E"
+          }
+        ],
+        "title": "Process States",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "These metrics measure how much data the application reads from and writes to storage (like hard drives or network storage).\n\n- Read Bytes: The total amount of data your application has pulled in - this could be configuration files, data files, logs it's processing, or any other files it needs to do its work.\n\n- Write Bytes: The total amount of data your application has saved out - this includes log files it creates, reports it generates, database records it saves, or any other output it produces.\n\nHeavy reading might mean your application is processing large datasets. Heavy writing might mean it's generating lots of output or logs. These numbers help you understand how much your application uses storage resources and network bandwidth. Sudden changes in these patterns can indicate if something unusual is happening - like if your application stops writing (which might mean it's stuck) or starts reading excessively (which might mean it's processing more data than expected).",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "binBps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 49
+        },
+        "id": 11,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_read_bytes_total{instance=~\"${instance:regex}\", groupname=\"${process}\"}[5m])",
+            "instant": false,
+            "legendFormat": "Read Bytes - {{instance}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "rate(namedprocess_namegroup_write_bytes_total{ instance=~\"${instance}\", groupname=\"${process}\", job=\"iap_k8_process_exporter_na\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Write Bytes - {{instance}}",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Disk I/O Operations",
+        "type": "timeseries"
+      }
+    ],
+    "preload": false,
+    "refresh": "5s",
+    "schemaVersion": 42,
+    "tags": [
+      "IAP",
+      "Itential"
+    ],
+    "templating": {
+      "list": [
+        {
+          "allowCustomValue": false,
+          "current": {
+            "text": "Prometheus IAP",
+            "value": "P0147FA0CB911A4EC"
+          },
+          "label": "Datasource",
+          "name": "datasource",
+          "options": [],
+          "query": "prometheus",
+          "refresh": 1,
+          "regex": "",
+          "type": "datasource"
+        },
+        {
+          "current": {
+            "text": [
+              "pe-iap01:9256"
+            ],
+            "value": [
+              "pe-iap01:9256"
+            ]
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "definition": "label_values(namedprocess_namegroup_num_procs{job=\"process_exporter\"},instance)",
+          "includeAll": false,
+          "label": "Instance",
+          "multi": true,
+          "name": "instance",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(namedprocess_namegroup_num_procs{job=\"process_exporter\"},instance)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "Pronghorn AGManager Application",
+            "value": "Pronghorn AGManager Application"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "definition": "label_values(namedprocess_namegroup_num_procs{job=\"process_exporter\", instance=~\"$instance\"},groupname)",
+          "label": "Process",
+          "name": "process",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(namedprocess_namegroup_num_procs{job=\"process_exporter\", instance=~\"$instance\"},groupname)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "^(Pronghorn Core|Pronghorn .* (?:Application|Adapter))$",
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Itential Process Health",
+    "uid": "fexofg2vrx24gd",
+    "version": 8,
+    "weekStart": "sunday"
+  }
+}

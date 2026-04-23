@@ -1,0 +1,1676 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "redis-sentinel-itential-platform",
+    "url": "/d/stkqw8t/redis-sentinel-itential-platform",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2026-01-03T16:30:37-05:00",
+    "updated": "2026-01-05T09:43:52-05:00",
+    "updatedBy": "steven.schattenberg@itential.com",
+    "createdBy": "steven.schattenberg@itential.com",
+    "version": 14,
+    "hasAcl": false,
+    "isFolder": false,
+    "apiVersion": "v0alpha1",
+    "folderId": 118,
+    "folderUid": "ff7kh98tmxtz4a",
+    "folderTitle": "production",
+    "folderUrl": "/dashboards/f/ff7kh98tmxtz4a/production",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Measures critical metrics from the redis_exporter that is configured to observe the Redis Sentinels.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 128,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel counts the number of Sentinel instances that are currently up and responding (`redis_up{job=\"redis_sentinel\"} == 1`), providing immediate visibility into the health of your Sentinel cluster. This is critical because Sentinel relies on quorum for failover decisions - if too many Sentinels are down, the cluster cannot perform automatic failover even if the master fails.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 2
+                },
+                {
+                  "color": "green",
+                  "value": 3
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Number of active Sentinels\ncount(redis_up{job=\"redis_sentinel\"} == 1)",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Active Sentinels",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel displays the number of clients currently connected to the Sentinel instance, including monitoring tools, application connections, and other Sentinels communicating via the gossip protocol. Tracking this helps identify unusual connection patterns that might indicate configuration issues, connection leaks, or unauthorized access attempts.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 100
+                },
+                {
+                  "color": "red",
+                  "value": 1000
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 3,
+          "y": 0
+        },
+        "id": 18,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_connected_clients{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}",
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Connected Clients",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel shows the total number of Redis masters being monitored by the Sentinel cluster, which should remain constant at your configured value (typically 1 for single-master setups). Changes in this metric indicate configuration drift, split-brain scenarios where different Sentinels are tracking different masters, or misconfiguration after maintenance.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 2
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 6,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_masters{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Monitored Masters",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel tracks the number of notification or client-reconfiguration scripts currently executing as triggered by Sentinel events (master down, failover start, failover end, etc.), providing visibility into automated response workflows. Monitoring this is important because stuck scripts can indicate problems with your automation, hung scripts can delay failover completion, and unexpectedly high counts might indicate rapid state changes or a misconfigured script that's being triggered repeatedly.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 5
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 9,
+          "y": 0
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_running_scripts{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Running Scripts",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This table displays detailed metadata about each Sentinel instance including hostname, Redis version, operating system, process ID, and TCP port, providing a quick reference for troubleshooting and verification that all Sentinels are running consistent configurations. This is important for identifying version mismatches that could cause compatibility issues, confirming proper deployment after updates, and having quick reference information during incident response.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false,
+              "wrapText": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 10,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": false
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "redis_instance_info{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n\n",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Sentinel Instance Details",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true,
+                "Value": true,
+                "__name__": true,
+                "job": true
+              },
+              "includeByName": {},
+              "indexByName": {
+                "instance": 0,
+                "os": 3,
+                "redis_mode": 2,
+                "redis_version": 1,
+                "tcp_port": 4
+              },
+              "renameByName": {
+                "Value": "",
+                "instance": "Instance",
+                "os": "OS",
+                "process_id": "PID",
+                "redis_build_id": "Build",
+                "redis_mode": "Redis Mode",
+                "redis_version": "Redis Version",
+                "run_id": "Run ID",
+                "tcp_port": "Port"
+              }
+            }
+          },
+          {
+            "id": "reduce",
+            "options": {
+              "labelsToFields": false,
+              "reducers": [
+                "firstNotNull"
+              ]
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel indicates whether the Redis master is healthy from Sentinel's perspective, showing 1 (OK/green) when the master is responding properly or 0 (DOWN/red) when Sentinel has marked it as down. This is your primary indicator of master health and the trigger for automatic failover - when this goes to 0, Sentinel will attempt to promote a replica if quorum is achieved.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "color": "red",
+                    "index": 1,
+                    "text": "Down"
+                  },
+                  "1": {
+                    "color": "green",
+                    "index": 0,
+                    "text": "OK"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 3
+        },
+        "id": 5,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_status{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\", master_status=\"ok\"}\n\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Master Status",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel displays which Redis instance is currently serving as the master by showing the master_address label (e.g., \"pe-redis03:6379\"), providing immediate visibility into the current topology especially after failovers. Tracking this is essential for verifying successful failovers, detecting unexpected topology changes, and ensuring application connection strings are pointing to the correct instance.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 3
+        },
+        "id": 6,
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "name",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Shows which server is currently master\nredis_sentinel_master_status{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{master_address}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Current Master Address",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "TILT mode is Sentinel's self-protection mechanism that activates when it detects system instability (time jumps from NTP corrections, CPU starvation, memory pressure, or scheduling delays), causing the Sentinel to stop making failover decisions for 30 seconds to prevent false failovers during its own instability. This is critical to track because frequent TILT events signal serious infrastructure problems (CPU contention, swapping, virtualization host issues), and if multiple Sentinels enter TILT simultaneously during a real master failure, your cluster loses automatic failover capability entirely.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "color": "green",
+                    "index": 0,
+                    "text": "Normal"
+                  },
+                  "1": {
+                    "color": "red",
+                    "index": 1,
+                    "text": "TILT"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 7
+        },
+        "id": 3,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_tilt{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "TILT Mode",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel verifies whether the Sentinel cluster can achieve quorum for failover decisions by running a continuous quorum check, displaying the message \"OK 3 usable Sentinels. Quorum and failover authorization can be reached\" (value=1/green) or an error message (value=0/red) if quorum is lost. This is critical because even if the master fails, Sentinel cannot perform automatic failover without quorum - this panel tells you whether your HA protection is functional before you need it.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 7
+        },
+        "id": 7,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "name",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_ckquorum_status{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{message}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Quorum Check Status",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This timeseries graph shows two metrics: the total number of Sentinels configured to monitor the master (`redis_sentinel_master_sentinels`) and the number currently reachable and healthy (`redis_sentinel_master_ok_sentinels`), with the gap between these lines indicating Sentinel availability problems. Monitoring this over time reveals patterns in Sentinel failures (maintenance windows, infrastructure issues, network problems), helps correlate Sentinel outages with other events, and provides early warning when quorum is at risk.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 11
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_sentinels{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Total number of Sentinels",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_ok_sentinels{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "The number of Sentinels that are currently reachable and healthy",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Sentinel Health",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This timeseries graph displays the total number of replicas configured (`redis_sentinel_master_slaves`) versus the number currently healthy and replicating (`redis_sentinel_master_ok_slaves`), with the gap indicating your loss of data redundancy and failover candidates. This is your data safety indicator - when replicas are down, you're operating without redundancy and have fewer (or zero) healthy instances to promote if the master fails, risking data loss and manual recovery scenarios.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 11
+        },
+        "id": 9,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_slaves{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Number of configured replicas",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_ok_slaves{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Number of healthy replicating replicas",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Replica Health",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel shows the configured time in milliseconds (default 5000ms/5 seconds) that a Sentinel waits without receiving a valid PING response before marking an instance as subjectively down (SDOWN). This setting directly impacts failover latency - too short causes false positives from transient network issues, too long delays detection of real failures and extends outage duration.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 8,
+          "x": 0,
+          "y": 19
+        },
+        "id": 11,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "redis_sentinel_master_setting_down_after_milliseconds{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}\n\n",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Down After (ms)",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel displays the maximum time in milliseconds (default 60000ms/60 seconds) that Sentinel allows for a failover operation to complete before considering it failed and potentially retrying. This timeout encompasses the entire failover process including waiting for replica promotion, reconfiguring other replicas, and verifying the new master is operational.",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 8,
+          "x": 8,
+          "y": 19
+        },
+        "id": 12,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Maximum time for failover\nredis_sentinel_master_setting_failover_timeout{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Failover Timeout (ms)",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel shows how many replicas can simultaneously synchronize from the new master during failover or recovery (default 1), controlling the load placed on the master during mass re-replication events. Setting this too high can overwhelm the master with replication traffic especially during failover when it's already handling production load, while setting it too low extends the time to achieve full redundancy after topology changes. ",
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 8,
+          "x": 16,
+          "y": 19
+        },
+        "id": 13,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Number of slaves that can sync in parallel\nredis_sentinel_master_setting_parallel_syncs{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Parallel Syncs",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel tracks the rate of Redis commands being rejected due to ACL permission violations (`rate(redis_acl_access_denied_cmd_total[5m])`), indicating that the monitoring user account lacks necessary permissions to execute Sentinel commands required for proper monitoring. High rates mean your Sentinel monitoring is blind to critical metrics and the exporter cannot gather complete health information, potentially missing important status changes.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 23
+        },
+        "id": 14,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Rate of ACL denied commands\nrate(redis_acl_access_denied_cmd_total{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "ACL Denied Commands (CRITICAL)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel monitors the rate of authentication failures (`rate(redis_acl_access_denied_auth_total[5m])`), indicating incorrect credentials, disabled user accounts, or connection attempts before authentication. Tracking this helps identify authentication configuration problems, potential security issues from unauthorized access attempts, or application misconfiguration trying to connect with wrong credentials.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 23
+        },
+        "id": 15,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(redis_acl_access_denied_auth_total{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Total Error Replies",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel displays the network throughput for the Sentinel instance in bytes per second, showing both input and output rates calculated over 5-minute windows, providing visibility into communication patterns with monitored instances and other Sentinels. Monitoring network I/O helps identify communication problems, detect unusual traffic patterns that might indicate attacks or misconfigurations, and establish baselines for capacity planning.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "Bps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 31
+        },
+        "id": 16,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Network input\nrate(redis_net_input_bytes_total{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Network Input: {{instance}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "# Network output\nrate(redis_net_output_bytes_total{job=\"redis_sentinel\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Network Output: {{instance}}",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Network I/O",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "This panel shows the rate of Redis commands being processed by the Sentinel instance per second, tracking the operational workload including health checks, Sentinel protocol commands, and client queries. This metric establishes baseline Sentinel activity and helps identify anomalies - sudden spikes might indicate monitoring storms, script loops, or attack patterns, while drops to zero suggest Sentinel is not performing its monitoring duties. ",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ops"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 31
+        },
+        "id": 17,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(redis_commands_processed_total{job=\"redis_sentinel\",instance=\"${hostname}:${redisPort}\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{instance}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Commands Processed Rate",
+        "type": "timeseries"
+      }
+    ],
+    "preload": false,
+    "refresh": "",
+    "schemaVersion": 42,
+    "tags": [
+      "Redis",
+      "Sentinel"
+    ],
+    "templating": {
+      "list": [
+        {
+          "allowCustomValue": false,
+          "current": {
+            "text": "pe-redis02",
+            "value": "pe-redis02"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P0147FA0CB911A4EC"
+          },
+          "definition": "query_result(redis_up{job=\"redis_sentinel\"})",
+          "description": "The hostname without any ports.",
+          "includeAll": false,
+          "label": "Hostname",
+          "name": "hostname",
+          "options": [],
+          "query": {
+            "qryType": 3,
+            "query": "query_result(redis_up{job=\"redis_sentinel\"})",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "/instance=\"(.*?):9122\"/",
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "9122",
+            "value": "9122"
+          },
+          "description": "The port that the exporter uses.",
+          "hide": 2,
+          "name": "redisPort",
+          "query": "9122",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "text": "9100",
+            "value": "9100"
+          },
+          "description": "The port that the node exporter uses.",
+          "hide": 2,
+          "name": "nodePort",
+          "query": "9100",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Redis Sentinel - Itential Platform",
+    "uid": "stkqw8t",
+    "version": 14,
+    "weekStart": ""
+  }
+}
