@@ -1,0 +1,2039 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "wfe-metrics",
+    "url": "/d/st85l2gssa/wfe-metrics",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2026-04-07T14:35:01-04:00",
+    "updated": "2026-04-20T12:47:58-04:00",
+    "updatedBy": "nick.andreano@itential.com",
+    "createdBy": "nick.andreano@itential.com",
+    "version": 13,
+    "hasAcl": false,
+    "isFolder": false,
+    "apiVersion": "v0alpha1",
+    "folderId": 118,
+    "folderUid": "ff7kh98tmxtz4a",
+    "folderTitle": "production",
+    "folderUrl": "/dashboards/f/ff7kh98tmxtz4a/production",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 152,
+    "links": [],
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 6,
+        "panels": [],
+        "title": "Job Data",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many jobs exist in the platform right now across all statuses?\n\nPoint-in-time snapshot from the polling query. Each value reflects the state of the jobs collection at the last poll interval.\n\n- Rising: jobs are being created faster than they are completing or being cleaned up\n- Stable: job creation and completion are balanced\n- Falling: the platform is draining its backlog or jobs are being pruned",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 6,
+          "x": 0,
+          "y": 1
+        },
+        "id": 1,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum(itential_job_status_total)",
+            "instant": true,
+            "legendFormat": "Total Jobs",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Total Jobs",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many jobs have successfully completed?\n\nPoint-in-time snapshot from the polling query.\n\n- High relative to Total Jobs: the platform has a healthy completion rate\n- Low relative to Total Jobs: many jobs are still in-flight or have not finished successfully",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 6,
+          "x": 6,
+          "y": 1
+        },
+        "id": 18,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_job_status_total{status=\"complete\"}",
+            "instant": true,
+            "legendFormat": "{{status}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Complete Jobs",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many jobs are currently in 'canceled' status?\n\nPoint-in-time snapshot from the polling query.\n\n- Near zero: normal operating state\n- Elevated: users or automation are canceling jobs — may indicate upstream issues or deliberate intervention",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 6,
+          "x": 12,
+          "y": 1
+        },
+        "id": 17,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_job_status_total{status=\"canceled\"}",
+            "instant": true,
+            "legendFormat": "{{status}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Canceled Jobs",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many jobs are currently in 'error' status?\n\nPoint-in-time snapshot from the polling query.\n\n- Near zero: normal operating state\n- Elevated: jobs are failing — review in combination with Job Error Rate % for severity context",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 6,
+          "x": 18,
+          "y": 1
+        },
+        "id": 15,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_job_status_total{status=\"error\"}",
+            "instant": true,
+            "legendFormat": "{{status}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Error Jobs",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: are jobs starting, completing, and erroring at a consistent rate over time?\n\nShows new job starts, completions, and errors within each 30s window, sourced from the change stream counters.\n\n- Start and complete lines tracking closely: healthy throughput balance\n- Start line consistently above complete line: jobs are arriving faster than they finish — in-flight count is growing\n- Error line rising: jobs are failing at an elevated rate — investigate immediately\n- All lines flat: no job activity in the window",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 4
+        },
+        "id": 41,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "increase(itential_job_start[30s])",
+            "instant": false,
+            "legendFormat": "Job Starts",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "increase(itential_job_complete[30s])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Job Complete",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "increase(itential_job_error[30s])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Job Error",
+            "range": true,
+            "refId": "C"
+          }
+        ],
+        "title": "Job Status Over Time",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: what percentage of all jobs in the collection have completed successfully?\n\nComputed as complete / total from the current polling snapshot. This is a cumulative ratio, not a windowed rate — it reflects the platform's historical success rate.\n\n- 95% or above: healthy\n- 80–95%: elevated failure or cancellation — worth investigating\n- Below 80%: significant job failures — immediate attention required",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "mappings": [],
+            "max": 100,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 4
+        },
+        "id": 25,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "100 * sum(itential_job_status_total{status=\"complete\"}) / sum(itential_job_status_total)",
+            "instant": false,
+            "legendFormat": "Job Success Rate",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Job Success Rate %",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: what percentage of all jobs in the collection have errored?\n\nComputed as error / total from the current polling snapshot. Cumulative ratio.\n\n- Below 1%: normal operating state\n- 1–5%: elevated error rate — monitor closely\n- Above 5%: critical error rate — investigate immediately",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "mappings": [],
+            "max": 100,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 8
+        },
+        "id": 24,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "100 * sum(itential_job_status_total{status=\"error\"} or vector(0)) / sum(itential_job_status_total)",
+            "instant": false,
+            "legendFormat": "Job Error Rate",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Job Error Rate %",
+        "type": "stat"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 5,
+        "panels": [],
+        "title": "Tasks Data",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many tasks exist in the platform right now across all statuses?\n\nPoint-in-time snapshot from the polling query. Each job typically spawns multiple tasks.\n\n- Rising: task creation is outpacing completion and cleanup\n- Stable: throughput is balanced\n- Falling: the platform is draining its task backlog",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 0,
+          "y": 13
+        },
+        "id": 2,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum(itential_task_status_total)",
+            "instant": true,
+            "legendFormat": "Total Tasks",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Total Tasks",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many tasks have successfully completed?\n\nPoint-in-time snapshot from the polling query.\n\n- High relative to Total Tasks: most work has been processed successfully\n- Low relative to Total Tasks: many tasks are still in-flight or have not completed",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 4,
+          "y": 13
+        },
+        "id": 21,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_task_status_total{status=\"complete\"}",
+            "instant": true,
+            "legendFormat": "Completed Tasks",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Completed Tasks",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many tasks are actively being executed right now?\n\nPoint-in-time snapshot from the polling query.\n\n- Stable value: the platform is processing work at a consistent pace\n- Sustained spike: tasks are taking longer than expected — may indicate a bottleneck\n- Near zero: the platform is idle or between job runs",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 8,
+          "y": 13
+        },
+        "id": 20,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_task_status_total{status=\"running\"}",
+            "instant": true,
+            "legendFormat": "{{status}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Running Tasks",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many tasks are currently in 'error' status?\n\nPoint-in-time snapshot from the polling query.\n\n- Near zero: normal operating state\n- Elevated: tasks are failing — check Task Error Rate by Server for per-node breakdown",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 12,
+          "y": 13
+        },
+        "id": 19,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_task_status_total{status=\"error\"}",
+            "instant": true,
+            "legendFormat": "{{status}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Errored Tasks",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many tasks are currently in 'canceled' status?\n\nPoint-in-time snapshot from the polling query. Cancellations are typically triggered by a parent job being canceled, not by task-level failures.\n\n- Near zero: normal operating state\n- Elevated: one or more parent jobs were likely canceled",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 16,
+          "y": 13
+        },
+        "id": 31,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_task_status_total{status=\"canceled\"}",
+            "instant": true,
+            "legendFormat": "{{status}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Canceled Tasks",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many tasks per second is each IAP node completing right now?\n\nAverage completion rate per node over the lookback window. Use this to identify which nodes are carrying the most load and whether throughput is consistent across the cluster.\n\n- All nodes near equal: workload is well distributed\n- One node significantly higher: that node is carrying a disproportionate share — may be intentional or indicate imbalance\n- All nodes near zero: the platform is idle or the change stream is not receiving events",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "tasks/s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 16
+        },
+        "id": 11,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_complete{server_id=~\"$server_id\"}[5m])",
+            "instant": false,
+            "legendFormat": "{{server_id}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Task Throughput Per Server",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: what is the overall platform task completion rate right now?\n\nSum of completion rates across all nodes. Use as a platform-wide health indicator.\n\n- Rising: the platform is processing more work\n- Stable: consistent throughput\n- Falling or near zero: throughput has dropped — check individual nodes for failures or idle state",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "displayName": "Total",
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "tasks/s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 4,
+          "x": 8,
+          "y": 16
+        },
+        "id": 28,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "sum(rate(itential_task_complete{server_id=~\"$server_id\"}[5m]))",
+            "instant": false,
+            "legendFormat": "All Servers",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Total Task Throughput",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how many new tasks are being dispatched to each IAP node within each time window?\n\nTask inserts detected by the change stream, broken out per node with a platform total. This reflects work being handed to the platform, not work being completed.\n\n- Spikes on a single node: work is being directed unevenly\n- Coordinated spikes across all nodes: a large job batch was triggered\n- Total line flat: no new tasks are being created — platform may be idle\n- A node absent from the chart: that node is not receiving work",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "id": 35,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "increase(itential_task_start[30s])",
+            "instant": false,
+            "legendFormat": "{{server_id}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "sum(increase(itential_task_start[30s]))",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Total",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Net New started tasks",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how is task completion throughput distributed across IAP nodes over time?\n\nRate of task completions per node (tasks/sec). Useful for identifying long-term workload imbalances.\n\n- Lines tracking closely together: workload is evenly distributed\n- One node consistently higher: that node is processing more tasks than others\n- A node dropping to zero: that node may have stopped processing — investigate",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "id": 22,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_complete{server_id=~\"$server_id\"}[5m])",
+            "instant": false,
+            "legendFormat": "{{server_id}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Task Completion Rate by Server Over Time",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how has the number of actively running tasks changed over time?\n\nPolling snapshot of tasks in 'running' status graphed over time. Updates on each poll interval, not in real time.\n\n- Stable plateau: consistent processing rate\n- Sustained climb: tasks are accumulating faster than they complete — potential bottleneck\n- Sharp drop to zero: all tasks completed or the platform went idle\n- Sawtooth pattern: normal batch behavior — tasks dispatched and drained in cycles",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        },
+        "id": 29,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_task_status_total{status=\"running\"}",
+            "instant": false,
+            "legendFormat": "Platform Total",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Running Tasks Over Time",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: which IAP nodes have processed the most tasks since the exporter last restarted?\n\nCumulative share of task completions per node. Because this uses a counter, slices represent all-time totals since the last restart, not current activity.\n\n- Equal slices: workload has been evenly distributed over time\n- One dominant slice: that node has processed significantly more tasks — may be intentional or indicate imbalance\n- A node absent: that node has not completed any tasks since the last restart",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 32
+        },
+        "id": 30,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true,
+            "values": []
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "sort": "desc",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "itential_task_complete{server_id=~\"$server_id\"}",
+            "instant": true,
+            "legendFormat": "{{server_id}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Cumulative Task Completions by Server",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Tracks the difference between task start and task completion rates (tasks/sec) over a 5-minute window, per IAP node. A value near zero indicates healthy throughput. A sustained positive value means tasks are starting faster than they are completing, which may signal a processing backlog.\n\n- Positive value: tasks are starting faster than completing — backlog is growing\n- Near zero: task throughput is balanced — healthy steady state\n- Negative value: Tasks are completing faster than starting — backlog is draining (or the system is idle)",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": true,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "line"
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "text",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 32
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_start{server_id=~\"$server_id\"}[$__rate_interval]) - rate(itential_task_complete{server_id=~\"$server_id\"}[$__rate_interval])\n",
+            "instant": false,
+            "legendFormat": "{{server_id}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Task Start/Complete Delta Rate",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: which IAP nodes are generating task errors, and at what rate?\n\nRate of new task errors per node (errors/sec), sourced from the change stream counter.\n\n- All lines near zero: normal operating state\n- One node elevated: that node is encountering failures — investigate its logs\n- All nodes elevated simultaneously: a systemic issue is causing errors across the cluster\n- Sustained rise on any node: errors are not self-resolving — intervention required",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 40
+        },
+        "id": 14,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_error{server_id=~\"$server_id\"}[5m])",
+            "instant": false,
+            "legendFormat": "{{server_id}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Task Error Rate by Server",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: is each IAP node completing tasks as fast as they are being assigned?\n\nPlots start rate and completion rate per node on the same axis. Each node has two lines — one for starts, one for completions.\n\n- Start and complete lines close together: that node is keeping pace with its workload\n- Start line consistently above complete line: tasks are queuing up on that node — a backlog is forming\n- Complete line above start line: that node is draining a backlog or going idle\n- All lines near zero: the platform is idle",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": true,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 40
+        },
+        "id": 33,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_start{server_id=~\"$server_id\"}[5m])",
+            "instant": false,
+            "legendFormat": "{{server_id}}: Start",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_complete{server_id=~\"$server_id\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{server_id}}: Complete",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Task Start vs. Task Complete",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: which IAP nodes are seeing task cancellations, and how frequently?\n\nNumber of task cancellations per node within each lookback window. Cancellations are typically triggered by a parent job being canceled, not task-level failures.\n\n- Near zero on all nodes: normal operating state\n- Spike on a single node: a job running on that node was canceled\n- Spike across all nodes simultaneously: a large batch job or workflow was canceled platform-wide",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 48
+        },
+        "id": 32,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "increase(itential_task_cancel{server_id=~\"$server_id\"}[5m])\n",
+            "instant": false,
+            "legendFormat": "{{server_id}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Task Cancellations by Server",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P0147FA0CB911A4EC"
+        },
+        "description": "Answers: how do task start and completion rates compare per node over time?\n\nPlots start rate and completion rate per node (tasks/sec). Unlike the delta panel, this shows raw rates rather than the difference, making it easier to see absolute throughput levels.\n\n- Start and complete lines tracking together: healthy throughput\n- Completion rate consistently below start rate: work is accumulating on that node\n- Both rates declining together: platform throughput is dropping — may be expected (end of batch) or unexpected\n- A node's lines both near zero: that node is idle or not receiving events",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 2,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                }
+              ]
+            },
+            "unit": "tasks/s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 48
+        },
+        "id": 10,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.3.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_complete{server_id=~\"$server_id\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{server_id}}: completed/s",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P0147FA0CB911A4EC"
+            },
+            "editorMode": "code",
+            "expr": "rate(itential_task_start{server_id=~\"$server_id\"}[5m])",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "{{server_id}}: started/s",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Task Throughput (tasks/sec, 5m avg)",
+        "type": "timeseries"
+      }
+    ],
+    "preload": false,
+    "schemaVersion": 42,
+    "tags": [
+      "IAP",
+      "Workflow Engine"
+    ],
+    "templating": {
+      "list": [
+        {
+          "allValue": ".*",
+          "current": {
+            "text": "All",
+            "value": ".*"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P0147FA0CB911A4EC"
+          },
+          "definition": "label_values(itential_task_complete, server_id)",
+          "description": "Filter panels by IAP server instance",
+          "includeAll": true,
+          "label": "Server",
+          "multi": true,
+          "name": "server_id",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(itential_task_complete, server_id)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 2,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "WFE Metrics",
+    "uid": "st85l2gssa",
+    "version": 13,
+    "weekStart": ""
+  }
+}
