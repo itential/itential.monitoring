@@ -1,0 +1,90 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Alloy
+  tags: alloy_install
+  block:
+    - name: Add Grafana RPM repository
+      ansible.builtin.yum_repository:
+        name: grafana
+        description: Grafana RPM Repository
+        baseurl: https://rpm.grafana.com
+        repo_gpgcheck: true
+        enabled: true
+        gpgcheck: true
+        gpgkey: https://rpm.grafana.com/gpg.key
+        sslverify: true
+        sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+
+    - name: Install Alloy package
+      ansible.builtin.dnf:
+        name: alloy
+        state: present
+
+    - name: Stop and disable Promtail if running
+      ansible.builtin.systemd:
+        name: promtail
+        state: stopped
+        enabled: false
+      failed_when: false
+
+    - name: Add alloy user to systemd-journal group
+      ansible.builtin.user:
+        name: alloy
+        groups: systemd-journal
+        append: true
+
+    - name: Add alloy user to extra groups
+      ansible.builtin.user:
+        name: alloy
+        groups: "{{ item }}"
+        append: true
+      loop: "{{ alloy_extra_groups }}"
+      when: alloy_extra_groups | length > 0
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Open Alloy HTTP port in firewall
+      ansible.posix.firewalld:
+        port: "{{ alloy_http_listen_port }}/tcp"
+        permanent: true
+        state: enabled
+        zone: public
+        immediate: true
+      when:
+        - ansible_facts.services["firewalld.service"] is defined
+        - ansible_facts.services["firewalld.service"].state == "running"
+        - ansible_facts.services["firewalld.service"].status == "enabled"
+
+- name: Configure Alloy
+  tags: alloy_configure
+  block:
+    - name: Deploy Alloy config
+      ansible.builtin.template:
+        src: config.alloy.j2
+        dest: /etc/alloy/config.alloy
+        owner: alloy
+        group: alloy
+        mode: "0640"
+        validate: alloy fmt %s
+      notify: Restart Alloy
+
+- name: Ensure Alloy is running
+  tags: always
+  block:
+    - name: Flush all handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start Alloy
+      ansible.builtin.systemd:
+        name: "{{ alloy_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Assert that Alloy is running
+      ansible.builtin.systemd:
+        name: "{{ alloy_service_name }}"
+      register: alloy_status
+      failed_when: alloy_status.status.ActiveState != "active"

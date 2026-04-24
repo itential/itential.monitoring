@@ -1,0 +1,8 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Deploy Alloy to Itential app nodes
+  hosts: redis*, mongodb*, platform*, iag5*
+  become: true
+  roles:
+    - role: itential.monitoring.alloy

@@ -1,0 +1,8 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+alloy_log_paths:
+  - path: /var/log/itential/platform/webserver.log
+    job: iap-http
+  - path: /var/log/itential/platform/*.log
+    job: iap

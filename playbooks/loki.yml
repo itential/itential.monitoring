@@ -1,0 +1,19 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Loki
+  hosts: loki
+  become: true
+  roles:
+    - role: itential.monitoring.loki
+
+- name: Configure Loki datasource in Grafana
+  hosts: grafana
+  become: true
+  vars:
+    grafana_loki_datasource_enabled: true
+  tasks:
+    - name: Provision Loki datasource
+      ansible.builtin.include_role:
+        name: itential.monitoring.grafana
+        tasks_from: loki_datasource

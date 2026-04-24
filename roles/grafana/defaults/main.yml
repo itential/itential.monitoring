@@ -12,3 +12,8 @@ grafana_gpg_key: https://rpm.grafana.com/gpg.key
 grafana_install_dir: /etc/grafana
 grafana_dashboard_dir: "{{ grafana_install_dir }}/provisioning/dashboards"
 grafana_allow_ui_updates: false
+
+# Loki datasource provisioning — managed automatically by the loki playbook.
+# Set grafana_loki_datasource_url in inventory for the grafana group before running the loki playbook.
+grafana_loki_datasource_enabled: false
+grafana_loki_datasource_url: ""

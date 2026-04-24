@@ -32,6 +32,8 @@
 
 # Add default datasources
 - name: Create grafana datasources file
+  tags: grafana_datasources
+  notify: Restart Grafana
   ansible.builtin.template:
     src: grafana_datasources.yml.j2
     dest: "{{ grafana_install_dir }}/provisioning/datasources/datasources.yml"
