@@ -1,0 +1,35 @@
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+{% if elasticsearch_ilm_enable_rollover %}
+          "rollover": {
+            "max_primary_shard_size": "{{ elasticsearch_ilm_rollover_size }}",
+            "max_age": "{{ elasticsearch_ilm_rollover_age }}"
+          }
+{% endif %}
+        }
+      },
+      "warm": {
+        "min_age": "{{ elasticsearch_ilm_warm_age }}",
+        "actions": {
+          "forcemerge": { "max_num_segments": 1 }
+        }
+      },
+{% if elasticsearch_ilm_cold_age is defined and elasticsearch_ilm_cold_age | length > 0 %}
+      "cold": {
+        "min_age": "{{ elasticsearch_ilm_cold_age }}",
+        "actions": {}
+      },
+{% endif %}
+      "delete": {
+        "min_age": "{{ elasticsearch_ilm_delete_age }}",
+        "actions": {
+          "delete": {}
+        }
+      }
+    }
+  }
+}

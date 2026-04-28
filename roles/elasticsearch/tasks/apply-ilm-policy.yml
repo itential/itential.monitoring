@@ -1,0 +1,111 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Set up Itential ILM policy
+  tags: elasticsearch_apply_ilm_policy
+  block:
+    - name: Create Itential logs index template # noqa command-instead-of-module
+      # PUT /_index_template/itential-logs
+      #
+      # Creates or replaces a composable index template that Elasticsearch applies
+      # automatically to every new index whose name matches itential-logs-* or
+      # itential-failures-*. The template does three things:
+      #
+      # 1. Attaches the ILM policy — index.lifecycle.name points newly created
+      #    indices at itential-logs-policy so they begin managed lifecycle
+      #    progression (hot → warm → cold → delete) immediately on creation.
+      #    Without this setting each index would have no lifecycle policy and
+      #    grow without bound until manually managed.
+      #
+      # 2. Sets replica count — number_of_replicas defaults to 0, which is correct
+      #    for single-node development deployments where a replica shard can never
+      #    be assigned (leaving it unassigned turns the index yellow and stalls ILM
+      #    rollover). Override elasticsearch_number_of_replicas in inventory for
+      #    multi-node production clusters.
+      #
+      # 3. Declares flattened mappings for variable-structure fields:
+      #    - @context: IAP sub-process context fields vary by log message type;
+      #      flattened stores the whole object as a single indexed field, preventing
+      #      dynamic mapping conflicts when the same key appears with different types
+      #      across log entries.
+      #    - mongodb.attr: MongoDB structured log attributes vary widely across
+      #      message types (e.g. attr.user is a string in some messages and a nested
+      #      object in others). Flattened prevents document_parsing_exception errors
+      #      that would otherwise drop MongoDB events from the pipeline.
+      #
+      # changed_when: 201 = template was created for the first time.
+      # 200 = template already existed and was updated — reported as ok (idempotent).
+      ansible.builtin.command:
+        cmd: >
+          curl -s -o /dev/null -w "%{http_code}"
+          -k
+          -u elastic:{{ elasticsearch_elastic_password }}
+          -X PUT https://localhost:9200/_index_template/itential-logs
+          -H "Content-Type: application/json"
+          -d '{
+            "index_patterns": ["itential-logs-*", "itential-failures-*"],
+            "template": {
+              "settings": {
+                "index.lifecycle.name": "itential-logs-policy",
+                "number_of_replicas": {{ elasticsearch_number_of_replicas | default(0) }}
+              },
+              "mappings": {
+                "properties": {
+                  "@context": { "type": "flattened" },
+                  "mongodb": {
+                    "properties": {
+                      "attr": { "type": "flattened" }
+                    }
+                  }
+                }
+              }
+            }
+          }'
+      register: elasticsearch_template_result
+      failed_when: elasticsearch_template_result.stdout not in ["200", "201"]
+      changed_when: elasticsearch_template_result.stdout == "201"
+      no_log: true
+      run_once: true
+
+    - name: Apply Itential logs ILM policy # noqa command-instead-of-module
+      # PUT /_ilm/policy/itential-logs-policy
+      #
+      # Creates or replaces the itential-logs-policy ILM policy, which defines the
+      # full lifecycle of every Itential log index from ingest through deletion.
+      # The policy body is rendered from ilm_policy.json.j2 using the ILM variables
+      # defined in inventory.
+      #
+      # Phase progression:
+      #   hot    — active write target; rolls over when the primary shard reaches
+      #            elasticsearch_ilm_rollover_size or elasticsearch_ilm_rollover_age,
+      #            whichever comes first. Rollover creates a new empty write index so
+      #            the hot shard never grows beyond the configured size limit.
+      #            Rollover can be disabled via elasticsearch_ilm_enable_rollover.
+      #   warm   — index is no longer written to; force-merged to one segment to
+      #            reduce file handles and improve query performance on aged data.
+      #   cold   — index is frozen; heap footprint is minimised and the index is
+      #            excluded from routine query caching. Still searchable on demand.
+      #   delete — index is permanently removed.
+      #
+      # The policy is applied to indices via the index template above
+      # (index.lifecycle.name: itential-logs-policy). Updating this policy affects
+      # all managed indices on their next ILM check interval (default 10 minutes).
+      #
+      # failed_when: only 200 is valid — PUT /_ilm/policy always returns 200
+      # regardless of whether the policy was created or updated. 201 is not
+      # returned by this endpoint.
+      # changed_when: false — no reliable signal to detect a first-time creation
+      # vs an update. The task is always reported as ok.
+      ansible.builtin.command:
+        cmd: >
+          curl -s -o /dev/null -w "%{http_code}"
+          -k
+          -u elastic:{{ elasticsearch_elastic_password }}
+          -X PUT https://localhost:9200/_ilm/policy/itential-logs-policy
+          -H "Content-Type: application/json"
+          -d '{{ lookup("template", "ilm_policy.json.j2") | to_json }}'
+      register: elasticsearch_ilm_result
+      failed_when: elasticsearch_ilm_result.stdout != "200"
+      changed_when: false
+      no_log: true
+      run_once: true

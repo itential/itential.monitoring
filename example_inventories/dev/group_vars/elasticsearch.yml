@@ -1,0 +1,5 @@
+---
+# Example ILM settings for a Development environment
+elasticsearch_ilm_enable_rollover: false
+elasticsearch_ilm_delete_age: "3d"
+elasticsearch_ilm_warm_age: "1d"

@@ -1,0 +1,8 @@
+---
+# Example ILM settings for a Production environment
+elasticsearch_ilm_enable_rollover: true
+elasticsearch_ilm_delete_age: "90d"
+elasticsearch_ilm_warm_age: "7d"
+elasticsearch_ilm_cold_age: "30d"
+elasticsearch_ilm_rollover_size: "10gb"
+elasticsearch_ilm_rollover_age: "1d"

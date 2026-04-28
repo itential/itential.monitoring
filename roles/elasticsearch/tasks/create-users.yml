@@ -7,15 +7,15 @@
     - name: Create logstash_writer role # noqa command-instead-of-module
       ansible.builtin.command:
         cmd: >
-          curl -s -o /dev/null -w "%{http_code}"
+          curl -s -w "\n%{http_code}"
           -k
           -u elastic:{{ elasticsearch_elastic_password }}
           -X PUT https://localhost:9200/_security/role/logstash_writer
           -H "Content-Type: application/json"
           -d '{"cluster":["manage_index_templates","monitor","manage_ilm"],"indices":[{"names":["itential-logs-*","itential-failures-*"],"privileges":["write","create","create_index","manage","manage_ilm"]}]}'
       register: elasticsearch_role_result
-      failed_when: elasticsearch_role_result.stdout not in ["200", "201"]
-      changed_when: true
+      failed_when: elasticsearch_role_result.stdout_lines[-1] not in ["200", "201"]
+      changed_when: (elasticsearch_role_result.stdout_lines[:-1] | join | from_json).role.created
       no_log: true
       run_once: true
 
@@ -37,62 +37,14 @@
     - name: Create grafana_reader role # noqa command-instead-of-module
       ansible.builtin.command:
         cmd: >
-          curl -s -o /dev/null -w "%{http_code}"
+          curl -s -w "\n%{http_code}"
           -k
           -u elastic:{{ elasticsearch_elastic_password }}
           -X PUT https://localhost:9200/_security/role/grafana_reader
           -H "Content-Type: application/json"
           -d '{"indices":[{"names":["itential-logs-*","itential-failures-*"],"privileges":["read","view_index_metadata"]}]}'
       register: elasticsearch_grafana_role_result
-      failed_when: elasticsearch_grafana_role_result.stdout not in ["200", "201"]
-      changed_when: true
-      no_log: true
-      run_once: true
-
-    - name: Apply Itential logs ILM policy # noqa command-instead-of-module
-      ansible.builtin.command:
-        cmd: >
-          curl -s -o /dev/null -w "%{http_code}"
-          -k
-          -u elastic:{{ elasticsearch_elastic_password }}
-          -X PUT https://localhost:9200/_ilm/policy/itential-logs-policy
-          -H "Content-Type: application/json"
-          -d '{
-            "policy": {
-              "phases": {
-                "hot": {
-                  "min_age": "0ms",
-                  "actions": {
-                    "rollover": {
-                      "max_primary_shard_size": "10gb",
-                      "max_age": "1d"
-                    }
-                  }
-                },
-                "warm": {
-                  "min_age": "7d",
-                  "actions": {
-                    "shrink": { "number_of_shards": 1 },
-                    "forcemerge": { "max_num_segments": 1 }
-                  }
-                },
-                "cold": {
-                  "min_age": "30d",
-                  "actions": {
-                    "freeze": {}
-                  }
-                },
-                "delete": {
-                  "min_age": "90d",
-                  "actions": {
-                    "delete": {}
-                  }
-                }
-              }
-            }
-          }'
-      register: elasticsearch_ilm_result
-      failed_when: elasticsearch_ilm_result.stdout not in ["200", "201"]
-      changed_when: true
+      failed_when: elasticsearch_grafana_role_result.stdout_lines[-1] not in ["200", "201"]
+      changed_when: (elasticsearch_grafana_role_result.stdout_lines[:-1] | join | from_json).role.created
       no_log: true
       run_once: true
