@@ -1,0 +1,6 @@
+---
+# Example ILM settings for a Staging environment
+elasticsearch_ilm_enable_rollover: false
+elasticsearch_ilm_delete_age: "7d"
+elasticsearch_ilm_warm_age: "2d"
+elasticsearch_ilm_cold_age: "5d"

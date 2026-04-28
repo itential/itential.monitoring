@@ -125,3 +125,8 @@
   ansible.builtin.include_tasks:
     file: create-users.yml
   tags: elasticsearch_users
+
+- name: Apply ILM Policy
+  ansible.builtin.include_tasks:
+    file: apply-ilm-policy.yml
+  tags: elasticsearch_apply_ilm_policy
