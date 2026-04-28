@@ -3,6 +3,9 @@
 ---
 kibana_version: "8.13.0"
 
+# Passwords (must be defined in inventory)
+kibana_elasticsearch_elastic_password: ""
+
 # Network
 kibana_server_port: 5601
 kibana_server_host: "0.0.0.0"
@@ -29,6 +32,15 @@ kibana_server_rewrite_base_path: false
 
 # TLS — secures both the Kibana server (HTTPS) and the Elasticsearch connection
 kibana_tls_enabled: true
-kibana_tls_cert: /etc/kibana/certs/kibana.crt
-kibana_tls_key: /etc/kibana/certs/kibana.key
-kibana_tls_ca_cert: /etc/kibana/certs/ca.crt
+kibana_tls_copy_certs: true
+kibana_tls_src_dir: ""
+kibana_tls_dest_dir: /etc/pki/kibana
+kibana_tls_cert_filename: "{{ inventory_hostname }}.crt"
+kibana_tls_cert_src: "{{ kibana_tls_src_dir }}/{{ kibana_tls_cert_filename }}"
+kibana_tls_cert_dest: "{{ kibana_tls_dest_dir }}/{{ kibana_tls_cert_filename }}"
+kibana_tls_key_filename: "{{ inventory_hostname }}.key"
+kibana_tls_key_src: "{{ kibana_tls_src_dir }}/{{ kibana_tls_key_filename }}"
+kibana_tls_key_dest: "{{ kibana_tls_dest_dir }}/{{ kibana_tls_key_filename }}"
+kibana_tls_ca_cert_filename: ca.crt
+kibana_tls_ca_cert_src: "{{ kibana_tls_src_dir }}/{{ kibana_tls_ca_cert_filename }}"
+kibana_tls_ca_cert_dest: "{{ kibana_tls_dest_dir }}/{{ kibana_tls_ca_cert_filename }}"

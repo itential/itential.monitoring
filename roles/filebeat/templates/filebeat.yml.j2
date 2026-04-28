@@ -23,9 +23,9 @@ output.logstash:
   hosts: {{ filebeat_output_logstash_hosts | to_json }}
 {% if filebeat_tls_enabled | bool %}
   ssl:
-    certificate_authorities: ["{{ filebeat_tls_ca_cert }}"]
-    certificate: "{{ filebeat_tls_cert }}"
-    key: "{{ filebeat_tls_key }}"
+    certificate_authorities: ["{{ filebeat_tls_ca_cert_dest }}"]
+    certificate: "{{ filebeat_tls_cert_dest }}"
+    key: "{{ filebeat_tls_key_dest }}"
 {% endif %}
 {% elif filebeat_output_elasticsearch_enabled | bool %}
 output.elasticsearch:
@@ -33,8 +33,8 @@ output.elasticsearch:
   index: "{{ filebeat_output_elasticsearch_index }}"
 {% if filebeat_tls_enabled | bool %}
   ssl:
-    certificate_authorities: ["{{ filebeat_tls_ca_cert }}"]
-    certificate: "{{ filebeat_tls_cert }}"
-    key: "{{ filebeat_tls_key }}"
+    certificate_authorities: ["{{ filebeat_tls_ca_cert_dest }}"]
+    certificate: "{{ filebeat_tls_cert_dest }}"
+    key: "{{ filebeat_tls_key_dest }}"
 {% endif %}
 {% endif %}

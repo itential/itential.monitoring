@@ -1,0 +1,43 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Propagate Filebeat TLS certificates
+  when: filebeat_tls_copy_certs | bool
+  tags:
+    - filebeat_certificates
+    - filebeat_certs
+  block:
+    - name: Create Filebeat TLS directory
+      ansible.builtin.file:
+        path: "{{ filebeat_tls_dest_dir }}"
+        state: directory
+        owner: "{{ filebeat_user }}"
+        group: "{{ filebeat_group }}"
+        mode: "0750"
+
+    - name: Copy key and certificates files
+      notify: Restart Filebeat
+      block:
+        - name: Copy the CA certificate file
+          ansible.builtin.copy:
+            src: "{{ filebeat_tls_ca_cert_src }}"
+            dest: "{{ filebeat_tls_ca_cert_dest }}"
+            mode: "0644"
+            owner: "{{ filebeat_user }}"
+            group: "{{ filebeat_group }}"
+
+        - name: Copy the key file
+          ansible.builtin.copy:
+            src: "{{ filebeat_tls_key_src }}"
+            dest: "{{ filebeat_tls_key_dest }}"
+            mode: "0640"
+            owner: "{{ filebeat_user }}"
+            group: "{{ filebeat_group }}"
+
+        - name: Copy the certificate file
+          ansible.builtin.copy:
+            src: "{{ filebeat_tls_cert_src }}"
+            dest: "{{ filebeat_tls_cert_dest }}"
+            mode: "0644"
+            owner: "{{ filebeat_user }}"
+            group: "{{ filebeat_group }}"

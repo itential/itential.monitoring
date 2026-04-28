@@ -1,0 +1,43 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Propagate Logstash TLS certificates
+  when: logstash_tls_copy_certs | bool
+  tags:
+    - logstash_certificates
+    - logstash_certs
+  block:
+    - name: Create Logstash TLS directory
+      ansible.builtin.file:
+        path: "{{ logstash_tls_dest_dir }}"
+        state: directory
+        owner: "{{ logstash_user }}"
+        group: "{{ logstash_group }}"
+        mode: "0750"
+
+    - name: Copy key and certificate files
+      notify: Restart Logstash
+      block:
+        - name: Copy the CA certificate file
+          ansible.builtin.copy:
+            src: "{{ logstash_tls_ca_cert_src }}"
+            dest: "{{ logstash_tls_ca_cert_dest }}"
+            mode: "0644"
+            owner: "{{ logstash_user }}"
+            group: "{{ logstash_group }}"
+
+        - name: Copy the key file
+          ansible.builtin.copy:
+            src: "{{ logstash_tls_key_src }}"
+            dest: "{{ logstash_tls_key_dest }}"
+            mode: "0640"
+            owner: "{{ logstash_user }}"
+            group: "{{ logstash_group }}"
+
+        - name: Copy the certificate file
+          ansible.builtin.copy:
+            src: "{{ logstash_tls_cert_src }}"
+            dest: "{{ logstash_tls_cert_dest }}"
+            mode: "0644"
+            owner: "{{ logstash_user }}"
+            group: "{{ logstash_group }}"

@@ -12,3 +12,7 @@
     app: itential-gateway-server
     environment: {{ filebeat_environment }}
   fields_under_root: true
+  multiline.type: pattern
+  multiline.pattern: '^\{'
+  multiline.negate: true
+  multiline.match: after

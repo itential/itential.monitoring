@@ -1,0 +1,75 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Propagate Elasticsearch TLS certificates
+  when: elasticsearch_tls_copy_certs | bool
+  tags:
+    - elasticsearch_certificates
+    - elasticsearch_certs
+  block:
+    - name: Create Elasticsearch TLS directory
+      ansible.builtin.file:
+        path: "{{ elasticsearch_tls_dest_dir }}"
+        state: directory
+        owner: "{{ elasticsearch_user }}"
+        group: "{{ elasticsearch_group }}"
+        mode: "0750"
+
+    - name: Copy key and certificates files
+      notify: Restart Elasticsearch
+      block:
+        - name: Copy the CA certificate file
+          ansible.builtin.copy:
+            src: "{{ elasticsearch_tls_ca_cert_src }}"
+            dest: "{{ elasticsearch_tls_ca_cert_dest }}"
+            mode: "0644"
+            owner: "{{ elasticsearch_user }}"
+            group: "{{ elasticsearch_group }}"
+
+        - name: Copy the key file
+          ansible.builtin.copy:
+            src: "{{ elasticsearch_tls_key_src }}"
+            dest: "{{ elasticsearch_tls_key_dest }}"
+            mode: "0640"
+            owner: "{{ elasticsearch_user }}"
+            group: "{{ elasticsearch_group }}"
+
+        - name: Copy the certificate file
+          ansible.builtin.copy:
+            src: "{{ elasticsearch_tls_cert_src }}"
+            dest: "{{ elasticsearch_tls_cert_dest }}"
+            mode: "0644"
+            owner: "{{ elasticsearch_user }}"
+            group: "{{ elasticsearch_group }}"
+
+    - name: Add Itential CA to system trust store (RedHat)
+      ansible.builtin.copy:
+        src: "{{ elasticsearch_tls_ca_cert_dest }}"
+        dest: /etc/pki/ca-trust/source/anchors/itential-ca.crt
+        remote_src: true
+        owner: root
+        group: root
+        mode: '0644'
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Itential CA to system trust store (Debian)
+      ansible.builtin.copy:
+        src: "{{ elasticsearch_tls_ca_cert_dest }}"
+        dest: /usr/local/share/ca-certificates/itential-ca.crt
+        remote_src: true
+        owner: root
+        group: root
+        mode: '0644'
+      when: ansible_os_family == "Debian"
+
+    - name: Update system CA trust store (RedHat)
+      ansible.builtin.command:
+        cmd: update-ca-trust extract
+      changed_when: false
+      when: ansible_os_family == "RedHat"
+
+    - name: Update system CA trust store (Debian)
+      ansible.builtin.command:
+        cmd: update-ca-certificates
+      changed_when: false
+      when: ansible_os_family == "Debian"

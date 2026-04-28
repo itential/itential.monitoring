@@ -36,10 +36,10 @@ xpack.security.enabled: {{ elasticsearch_tls_enabled | lower }}
 xpack.security.transport.ssl.enabled: {{ elasticsearch_tls_enabled | lower }}
 xpack.security.http.ssl.enabled: {{ elasticsearch_tls_enabled | lower }}
 {% if elasticsearch_tls_enabled | bool %}
-xpack.security.transport.ssl.certificate_authorities: ["{{ elasticsearch_tls_ca_cert }}"]
-xpack.security.transport.ssl.certificate: {{ elasticsearch_tls_cert }}
-xpack.security.transport.ssl.key: {{ elasticsearch_tls_key }}
-xpack.security.http.ssl.certificate_authorities: ["{{ elasticsearch_tls_ca_cert }}"]
-xpack.security.http.ssl.certificate: {{ elasticsearch_tls_cert }}
-xpack.security.http.ssl.key: {{ elasticsearch_tls_key }}
+xpack.security.transport.ssl.certificate_authorities: ["{{ elasticsearch_tls_ca_cert_dest }}"]
+xpack.security.transport.ssl.certificate: {{ elasticsearch_tls_cert_dest }}
+xpack.security.transport.ssl.key: {{ elasticsearch_tls_key_dest }}
+xpack.security.http.ssl.certificate_authorities: ["{{ elasticsearch_tls_ca_cert_dest }}"]
+xpack.security.http.ssl.certificate: {{ elasticsearch_tls_cert_dest }}
+xpack.security.http.ssl.key: {{ elasticsearch_tls_key_dest }}
 {% endif %}

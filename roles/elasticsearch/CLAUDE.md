@@ -24,8 +24,8 @@ Certificates must be pre-placed on the host before the play runs. The role does 
 ## OS support
 Supports both RHEL/CentOS (`rpm_key` + `yum_repository`) and Debian/Ubuntu (`apt_key` + `apt_repository`). All package tasks are guarded with `when: ansible_os_family == "RedHat/Debian"`.
 
-## Known gaps
-- The role does not create Elasticsearch users (e.g. `logstash_writer`). This is a known gap — user provisioning is not handled by any role or playbook and must be done manually after the first run.
+## User and role provisioning
+`tasks/create-users.yml` creates the `logstash_writer` role and user, the `grafana_reader` role, and applies the `itential-logs-policy` ILM policy via the Elasticsearch REST API. It runs after the service is confirmed active and is tagged `elasticsearch_users`. Both `elasticsearch_elastic_password` and `elasticsearch_logstash_writer_password` must be set (use Ansible Vault).
 
 ## Variables that must be overridden
 None are strictly required — the defaults produce a working single-node instance with TLS enabled. However:

@@ -1,0 +1,43 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Propagate Kibana TLS certificates
+  when: kibana_tls_copy_certs | bool
+  tags:
+    - kibana_certificates
+    - kibana_certs
+  block:
+    - name: Create Kibana TLS directory
+      ansible.builtin.file:
+        path: "{{ kibana_tls_dest_dir }}"
+        state: directory
+        owner: "{{ kibana_user }}"
+        group: "{{ kibana_group }}"
+        mode: "0750"
+
+    - name: Copy key and certificate files
+      notify: Restart Kibana
+      block:
+        - name: Copy the CA certificate file
+          ansible.builtin.copy:
+            src: "{{ kibana_tls_ca_cert_src }}"
+            dest: "{{ kibana_tls_ca_cert_dest }}"
+            mode: "0644"
+            owner: "{{ kibana_user }}"
+            group: "{{ kibana_group }}"
+
+        - name: Copy the key file
+          ansible.builtin.copy:
+            src: "{{ kibana_tls_key_src }}"
+            dest: "{{ kibana_tls_key_dest }}"
+            mode: "0640"
+            owner: "{{ kibana_user }}"
+            group: "{{ kibana_group }}"
+
+        - name: Copy the certificate file
+          ansible.builtin.copy:
+            src: "{{ kibana_tls_cert_src }}"
+            dest: "{{ kibana_tls_cert_dest }}"
+            mode: "0644"
+            owner: "{{ kibana_user }}"
+            group: "{{ kibana_group }}"
