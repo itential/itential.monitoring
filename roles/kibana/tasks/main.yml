@@ -61,6 +61,19 @@
         group: "{{ kibana_group }}"
         mode: "0660"
 
+    - name: Create service token
+      ansible.builtin.include_tasks:
+        file: create-service-token.yml
+      tags: kibana_service_token
+
+- name: Copy TLS certificates
+  ansible.builtin.include_tasks:
+    file: copy-certs.yml
+  tags:
+    - kibana_certificates
+    - kibana_certs
+  when: kibana_tls_copy_certs | bool
+
 - name: Ensure Kibana is running
   tags: always
   block:

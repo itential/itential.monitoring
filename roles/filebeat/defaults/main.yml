@@ -18,22 +18,20 @@ filebeat_environment: unset
 # Service
 filebeat_service_name: filebeat
 
-# Log inputs — list of paths to harvest
-filebeat_inputs:
-  - type: filestream
-    id: syslog
-    enabled: true
-    paths:
-      - /var/log/syslog
-      - /var/log/messages
-    fields:
-      log_type: syslog
-
 # TLS — secures the connection to Logstash or Elasticsearch
 filebeat_tls_enabled: true
-filebeat_tls_ca_cert: /etc/filebeat/certs/ca.crt
-filebeat_tls_cert: /etc/filebeat/certs/filebeat.crt
-filebeat_tls_key: /etc/filebeat/certs/filebeat.key
+filebeat_tls_copy_certs: true
+filebeat_tls_src_dir: ""
+filebeat_tls_dest_dir: /etc/pki/filebeat
+filebeat_tls_cert_filename: "{{ inventory_hostname }}.crt"
+filebeat_tls_cert_src: "{{ filebeat_tls_src_dir }}/{{ filebeat_tls_cert_filename }}"
+filebeat_tls_cert_dest: "{{ filebeat_tls_dest_dir }}/{{ filebeat_tls_cert_filename }}"
+filebeat_tls_key_filename: "{{ inventory_hostname }}.key"
+filebeat_tls_key_src: "{{ filebeat_tls_src_dir }}/{{ filebeat_tls_key_filename }}"
+filebeat_tls_key_dest: "{{ filebeat_tls_dest_dir }}/{{ filebeat_tls_key_filename }}"
+filebeat_tls_ca_cert_filename: ca.crt
+filebeat_tls_ca_cert_src: "{{ filebeat_tls_src_dir }}/{{ filebeat_tls_ca_cert_filename }}"
+filebeat_tls_ca_cert_dest: "{{ filebeat_tls_dest_dir }}/{{ filebeat_tls_ca_cert_filename }}"
 
 # Output — mutually exclusive; set only one
 # Send to Logstash (default)

@@ -16,6 +16,7 @@
   - [Kibana](#kibana)
   - [Filebeat](#filebeat)
   - [Production Topology Summary](#production-topology-summary)
+  - [AWS EC2 Instance Mapping](#aws-ec2-instance-mapping)
 - [Prerequisites](#prerequisites)
   - [TLS Certificates Required](#tls-certificates-required)
 - [Installation](#installation)
@@ -264,6 +265,53 @@ the existing Itential infrastructure:
 For smaller or non-production deployments, Logstash and Kibana can be co-located on
 a single server (combined 8 vCPU, 16 GB RAM, 40 GB disk), with a single-node
 Elasticsearch instance on a separate server.
+
+### AWS EC2 Instance Mapping
+
+The tables below map the sizing tiers above to AWS EC2 instance types. All storage
+recommendations use EBS gp3 volumes unless noted.
+
+**Elasticsearch**
+
+| Tier | EC2 Instance | vCPU | RAM | Storage | Notes |
+|---|---|---|---|---|---|
+| Development / lab | `m6g.xlarge` | 4 | 16 GB | 200 GB EBS gp3 | Set `elasticsearch_heap_size: "8g"` |
+| Small production | `m6g.2xlarge` | 8 | 32 GB | 1 TB EBS gp3 | Set `elasticsearch_heap_size: "16g"` |
+| Production (per node, ×3) | `m6g.2xlarge` | 8 | 32 GB | 1 TB EBS gp3 | Set `elasticsearch_heap_size: "16g"` |
+
+> **Alternatives:** `r6g.2xlarge` (8 vCPU, 64 GB RAM) provides additional OS page cache
+> headroom beyond the 16g heap, which benefits read-heavy query workloads. `i3.2xlarge`
+> (8 vCPU, 61 GB RAM, 1.9 TB local NVMe) is a strong option when local NVMe throughput
+> is preferred over EBS for high-volume log ingest.
+
+**Logstash**
+
+| Tier | EC2 Instance | vCPU | RAM | Storage | Notes |
+|---|---|---|---|---|---|
+| Development / lab | `t3.medium` | 2 | 4 GB | 20 GB EBS gp3 | Set `logstash_heap_size: "1g"` |
+| Small production | `c6g.xlarge` | 4 | 8 GB | 20 GB EBS gp3 | Set `logstash_heap_size: "2g"` |
+| Production | `c6g.2xlarge` | 8 | 16 GB | 20 GB EBS gp3 | Set `logstash_heap_size: "4g"` |
+
+> Compute-optimized (`c6g`) instances are recommended over general-purpose (`m6g`) for
+> Logstash because the grok and mutate filters in the Itential pipeline are CPU-bound.
+> Logstash pipeline workers default to the number of vCPUs, so the `c6g.2xlarge` runs
+> 8 workers in parallel. Disk is minimal — Logstash stores no log data.
+
+**Kibana**
+
+| Tier | EC2 Instance | vCPU | RAM | Storage | Notes |
+|---|---|---|---|---|---|
+| Development / lab | `t3.medium` | 2 | 4 GB | 20 GB EBS gp3 | |
+| Small production | `c6g.xlarge` | 4 | 8 GB | 20 GB EBS gp3 | |
+| Production | `c6g.xlarge` | 4 | 8 GB | 20 GB EBS gp3 | Add a second node behind an ALB to scale horizontally |
+
+**Production Topology — EC2 Summary**
+
+| Server | Count | EC2 Instance | EBS Volume |
+|---|---|---|---|
+| Elasticsearch node | 3 | `m6g.2xlarge` | 1 TB gp3 per node |
+| Logstash node | 2 | `c6g.2xlarge` | 20 GB gp3 |
+| Kibana node | 1 | `c6g.xlarge` | 20 GB gp3 |
 
 ---
 

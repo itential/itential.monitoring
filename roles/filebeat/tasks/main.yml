@@ -76,6 +76,14 @@
       when: filebeat_setup_dashboards_enabled | bool
       changed_when: true
 
+- name: Copy TLS certificates
+  ansible.builtin.include_tasks:
+    file: copy-certs.yml
+  when: filebeat_tls_copy_certs | bool
+  tags:
+    - filebeat_certificates
+    - filebeat_certs
+
 - name: Ensure Filebeat is running
   tags: always
   block:

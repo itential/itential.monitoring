@@ -8,11 +8,12 @@ input {
   beats {
     port => {{ logstash_beats_port }}
 {% if logstash_tls_enabled | bool %}
-    ssl             => true
-    ssl_certificate => "{{ logstash_tls_cert }}"
-    ssl_key         => "{{ logstash_tls_key }}"
+    ssl_enabled => true
+    ssl_certificate => "{{ logstash_tls_cert_dest }}"
+    ssl_key => "{{ logstash_tls_key_dest }}"
+    ssl_certificate_authorities => ["{{ logstash_tls_ca_cert_dest }}"]
 {% else %}
-    ssl => false
+    ssl_enabled => false
 {% endif %}
   }
 }
@@ -39,17 +40,34 @@ filter {
       gsub => ["itential.process", "\.log$", ""]
     }
 
-    # Unwrap message from JSON array string
-    # IAP wraps log messages as: ["message text"]
-    # Must run before sub-process specific filters that match on message content
-    # Handles both @message and message depending on Filebeat version
+    # Unwrap message from JSON array string.
+    # IAP sub-process logs are wrapped in a JSON array with two shapes:
+    #   ["message text"]                                    — plain string element
+    #   [{"message":"...","context":{"key":"val",...}}]     — object element with context
+    # Must run before sub-process specific filters that match on message content.
     ruby {
       code => '
         msg = event.get("@message") || event.get("message")
-        if msg && msg.start_with?("[\"") && msg.end_with?("\"]")
-          clean = msg[2..-3]
-          event.set("message", clean)
-          event.remove("@message")
+        if msg && msg.start_with?("[")
+          begin
+            parsed = JSON.parse(msg)
+            if parsed.is_a?(Array) && !parsed.empty?
+              first = parsed[0]
+              if first.is_a?(Hash)
+                event.set("message", first["message"]) if first["message"]
+                if first["context"].is_a?(Hash)
+                  first["context"].each do |k, v|
+                    event.set("itential.#{k}", v)
+                  end
+                end
+              elsif first.is_a?(String)
+                event.set("message", first)
+              end
+              event.remove("@message")
+            end
+          rescue
+            # not valid JSON — leave message as-is
+          end
         end
       '
     }
@@ -180,8 +198,8 @@ filter {
     }
   }
 
-  # IAG5
-  if [app] == "itential-gateway-server" {
+  # IAG5 (server, client, and runner all emit the same JSON log format)
+  if [app] == "itential-gateway-server" or [app] == "itential-gateway-client" or [app] == "itential-gateway-runner" {
 
     # IAG5 uses 'time' not 'timestamp'
     date {
@@ -275,13 +293,57 @@ filter {
     }
   }
 
-  # MongoDB
+  # MongoDB (4.4+ structured JSON format)
   if [app] == "mongodb" {
-    grok {
-      match => { "message" => "%{TIMESTAMP_ISO8601:timestamp}\s+%{WORD:log_level}\s+%{GREEDYDATA:mongo_message}" }
+
+    # Each log line is a self-contained JSON object
+    json {
+      source => "message"
+      target => "mongodb"
     }
-    if [mongo_message] =~ /ms$/ {
+
+    # Timestamp is nested under t.$date
+    date {
+      match        => ["[mongodb][t][$date]", "ISO8601"]
+      target       => "@timestamp"
+      remove_field => ["[mongodb][t]"]
+    }
+
+    # Promote and normalize field names
+    mutate {
+      rename => {
+        "[mongodb][s]"   => "log.level"
+        "[mongodb][c]"   => "[mongodb][component]"
+        "[mongodb][ctx]" => "[mongodb][context]"
+        "[mongodb][msg]" => "[mongodb][message]"
+      }
+    }
+
+    # Expand single-letter severity codes to readable names
+    if [log.level] == "F" { mutate { replace => { "log.level" => "fatal"   } } }
+    if [log.level] == "E" { mutate { replace => { "log.level" => "error"   } } }
+    if [log.level] == "W" { mutate { replace => { "log.level" => "warning" } } }
+    if [log.level] == "I" { mutate { replace => { "log.level" => "info"    } } }
+    if [log.level] =~ /^D/ { mutate { replace => { "log.level" => "debug"  } } }
+
+    # durationMillis is present on any operation that exceeded slowOpThresholdMs.
+    # Check before serializing attr to a string.
+    if [mongodb][attr][durationMillis] {
       mutate { add_tag => ["slow_query"] }
+    }
+
+    if [log.level] in ["error", "fatal"] {
+      mutate { add_tag => ["mongodb_error"] }
+    }
+
+    # Serialize attr to a JSON string to prevent dynamic mapping conflicts.
+    # The attr structure varies widely across MongoDB log message types and will
+    # cause Elasticsearch document_parsing_exception errors if indexed as an object.
+    ruby {
+      code => '
+        attr = event.get("[mongodb][attr]")
+        event.set("[mongodb][attr]", attr.to_json) if attr
+      '
     }
   }
 
@@ -322,7 +384,7 @@ output {
       user     => "logstash_writer"
       password => "${ELASTIC_PASSWORD}"
 {% if logstash_tls_enabled | bool %}
-      ssl_certificate_authorities => ["{{ logstash_tls_ca_cert }}"]
+      ssl_certificate_authorities => ["{{ logstash_tls_ca_cert_dest }}"]
 {% endif %}
     }
   }
@@ -334,7 +396,7 @@ output {
     user     => "logstash_writer"
     password => "${ELASTIC_PASSWORD}"
 {% if logstash_tls_enabled | bool %}
-    ssl_certificate_authorities => ["{{ logstash_tls_ca_cert }}"]
+    ssl_certificate_authorities => ["{{ logstash_tls_ca_cert_dest }}"]
 {% endif %}
   }
 }

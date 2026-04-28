@@ -15,8 +15,8 @@ server.rewriteBasePath: {{ kibana_server_rewrite_base_path | lower }}
 # Server TLS
 {% if kibana_tls_enabled | bool %}
 server.ssl.enabled: true
-server.ssl.certificate: {{ kibana_tls_cert }}
-server.ssl.key: {{ kibana_tls_key }}
+server.ssl.certificate: {{ kibana_tls_cert_dest }}
+server.ssl.key: {{ kibana_tls_key_dest }}
 {% else %}
 server.ssl.enabled: false
 {% endif %}
@@ -24,7 +24,7 @@ server.ssl.enabled: false
 # Elasticsearch
 elasticsearch.hosts: {{ kibana_elasticsearch_hosts | to_json }}
 {% if kibana_tls_enabled | bool %}
-elasticsearch.ssl.certificateAuthorities: ["{{ kibana_tls_ca_cert }}"]
+elasticsearch.ssl.certificateAuthorities: ["{{ kibana_tls_ca_cert_dest }}"]
 elasticsearch.ssl.verificationMode: certificate
 {% endif %}
 

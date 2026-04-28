@@ -1,0 +1,56 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Delete existing Kibana service token if present # noqa command-instead-of-module
+  ansible.builtin.command:
+    cmd: >
+      curl -s -o /dev/null -w "%{http_code}"
+      -k
+      -u elastic:{{ kibana_elasticsearch_elastic_password }}
+      -X DELETE {{ kibana_elasticsearch_hosts | first }}/_security/service/elastic/kibana/credential/token/kibana-token
+  register: kibana_token_delete_result
+  changed_when: kibana_token_delete_result.stdout == "200"
+  no_log: true
+  run_once: true
+
+- name: Create Kibana service account token # noqa command-instead-of-module
+  ansible.builtin.command:
+    cmd: >
+      curl -s
+      -k
+      -u elastic:{{ kibana_elasticsearch_elastic_password }}
+      -X POST {{ kibana_elasticsearch_hosts | first }}/_security/service/elastic/kibana/credential/token/kibana-token
+  register: kibana_token_create_result
+  changed_when: true
+  no_log: true
+  run_once: true
+
+- name: Extract Kibana service token
+  ansible.builtin.set_fact:
+    kibana_service_token: "{{ (kibana_token_create_result.stdout | from_json).token.value }}"
+  no_log: true
+  run_once: true
+
+- name: Create Kibana keystore if it does not exist
+  ansible.builtin.command:
+    cmd: /usr/share/kibana/bin/kibana-keystore create
+  args:
+    creates: /etc/kibana/kibana.keystore
+
+- name: Add service token to Kibana keystore
+  ansible.builtin.shell:
+    cmd: >
+      set -o pipefail &&
+      echo "{{ kibana_service_token }}" |
+      /usr/share/kibana/bin/kibana-keystore add
+      elasticsearch.serviceAccountToken --stdin --force
+  changed_when: true
+  no_log: true
+  notify: Restart Kibana
+
+- name: Configure Kibana to use keystore for service token
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^elasticsearch.serviceAccountToken'
+    line: 'elasticsearch.serviceAccountToken: "${elasticsearch.serviceAccountToken}"'
+  notify: Restart Kibana

@@ -70,6 +70,38 @@
         group: "{{ elasticsearch_group }}"
         mode: "0660"
 
+    - name: Create Elasticsearch keystore if it does not exist
+      ansible.builtin.command:
+        cmd: /usr/share/elasticsearch/bin/elasticsearch-keystore create
+      become: true
+      become_user: elasticsearch
+      args:
+        creates: /etc/elasticsearch/elasticsearch.keystore
+
+    - name: Check if bootstrap.password exists in Elasticsearch keystore
+      ansible.builtin.command:
+        cmd: /usr/share/elasticsearch/bin/elasticsearch-keystore list
+      register: elasticsearch_keystore_list
+      changed_when: false
+
+    - name: Add bootstrap password to Elasticsearch keystore
+      ansible.builtin.shell:
+        cmd: >
+          set -o pipefail &&
+          echo "{{ elasticsearch_elastic_password }}" |
+          /usr/share/elasticsearch/bin/elasticsearch-keystore add -x bootstrap.password
+      changed_when: true
+      no_log: true
+      when: "'bootstrap.password' not in elasticsearch_keystore_list.stdout"
+
+- name: Copy TLS certificates
+  ansible.builtin.include_tasks:
+    file: copy-certs.yml
+  tags:
+    - elasticsearch_certificates
+    - elasticsearch_certs
+  when: elasticsearch_tls_copy_certs | bool
+
 - name: Ensure Elasticsearch is running
   tags: always
   block:
@@ -88,3 +120,8 @@
         name: "{{ elasticsearch_service_name }}"
       register: elasticsearch_status
       failed_when: elasticsearch_status.status.ActiveState != "active"
+
+- name: Create users and roles
+  ansible.builtin.include_tasks:
+    file: create-users.yml
+  tags: elasticsearch_users

@@ -79,56 +79,67 @@
         group: "{{ logstash_group }}"
         mode: "0660"
 
-    - name: Check if Logstash keystore exists
-      ansible.builtin.stat:
-        path: /etc/logstash/logstash.keystore
-      register: logstash_keystore_stat
+    - name: Update Logstash keystore
+      tags: logstash_keystore
+      block:
+        - name: Check if Logstash keystore exists
+          ansible.builtin.stat:
+            path: /etc/logstash/logstash.keystore
+          register: logstash_keystore_stat
 
-    - name: Create Logstash keystore
-      ansible.builtin.command:
-        cmd: /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash create
-      environment:
-        LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
-      register: logstash_keystore_create
-      failed_when: logstash_keystore_create.rc != 0 or 'ERROR' in logstash_keystore_create.stdout
-      changed_when: "'Created Logstash keystore' in logstash_keystore_create.stdout"
-      when: not logstash_keystore_stat.stat.exists
+        - name: Create Logstash keystore
+          ansible.builtin.command:
+            cmd: /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash create
+          environment:
+            LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
+          register: logstash_keystore_create
+          failed_when: logstash_keystore_create.rc != 0 or 'ERROR' in logstash_keystore_create.stdout
+          changed_when: "'Created Logstash keystore' in logstash_keystore_create.stdout"
+          when: not logstash_keystore_stat.stat.exists
 
-    - name: Remove existing ELASTIC_PASSWORD from keystore
-      ansible.builtin.command:
-        cmd: /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash remove ELASTIC_PASSWORD
-      environment:
-        LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
-      failed_when: false
-      changed_when: false
-      no_log: true
+        - name: Remove existing ELASTIC_PASSWORD from keystore
+          ansible.builtin.command:
+            cmd: /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash remove ELASTIC_PASSWORD
+          environment:
+            LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
+          failed_when: false
+          changed_when: false
+          no_log: true
 
-    - name: Set ELASTIC_PASSWORD in Logstash keystore
-      ansible.builtin.shell:
-        cmd: >
-          set -o pipefail &&
-          echo "{{ logstash_elastic_password }}" |
-          /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash add ELASTIC_PASSWORD
-        executable: /bin/bash
-      environment:
-        LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
-      register: logstash_keystore_add
-      failed_when: logstash_keystore_add.rc != 0 or 'ERROR' in logstash_keystore_add.stdout
-      changed_when: "'Added \\'elastic_password\\' to the Logstash keystore' in logstash_keystore_add.stdout"
-      no_log: true
-      notify: Restart Logstash
+        - name: Set ELASTIC_PASSWORD in Logstash keystore
+          ansible.builtin.shell:
+            cmd: >
+              set -o pipefail &&
+              echo "{{ logstash_elastic_password }}" |
+              /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash add ELASTIC_PASSWORD
+            executable: /bin/bash
+          environment:
+            LOGSTASH_KEYSTORE_PASS: "{{ logstash_keystore_password }}"
+          register: logstash_keystore_add
+          failed_when: logstash_keystore_add.rc != 0 or 'ERROR' in logstash_keystore_add.stdout
+          changed_when: "'Added \\'elastic_password\\' to the Logstash keystore' in logstash_keystore_add.stdout"
+          no_log: true
+          notify: Restart Logstash
 
-    - name: Set LOGSTASH_KEYSTORE_PASS in service environment
-      ansible.builtin.lineinfile:
-        path: "{{ '/etc/sysconfig/logstash' if ansible_os_family == 'RedHat' else '/etc/default/logstash' }}"
-        regexp: "^LOGSTASH_KEYSTORE_PASS="
-        line: "LOGSTASH_KEYSTORE_PASS={{ logstash_keystore_password }}"
-        create: true
-        owner: root
-        group: "{{ logstash_group }}"
-        mode: "0640"
-      no_log: true
-      notify: Restart Logstash
+        - name: Set LOGSTASH_KEYSTORE_PASS in service environment
+          ansible.builtin.lineinfile:
+            path: "{{ '/etc/sysconfig/logstash' if ansible_os_family == 'RedHat' else '/etc/default/logstash' }}"
+            regexp: "^LOGSTASH_KEYSTORE_PASS="
+            line: "LOGSTASH_KEYSTORE_PASS={{ logstash_keystore_password }}"
+            create: true
+            owner: root
+            group: "{{ logstash_group }}"
+            mode: "0640"
+          no_log: true
+          notify: Restart Logstash
+
+- name: Copy TLS certificates
+  ansible.builtin.include_tasks:
+    file: copy-certs.yml
+  tags:
+    - logstash_certificates
+    - logstash_certs
+  when: logstash_tls_copy_certs | bool
 
 - name: Ensure Logstash is running
   tags: always
