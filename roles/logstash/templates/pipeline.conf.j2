@@ -347,6 +347,33 @@ filter {
     }
   }
 
+  # etcd (3.4+ structured JSON format)
+  if [app] == "etcd" {
+
+    # Each log line is a self-contained JSON object
+    json {
+      source => "message"
+      target => "etcd"
+    }
+
+    date {
+      match        => ["[etcd][ts]", "ISO8601"]
+      target       => "@timestamp"
+      remove_field => ["[etcd][ts]"]
+    }
+
+    mutate {
+      rename => {
+        "[etcd][level]" => "log.level"
+        "[etcd][msg]"   => "message"
+      }
+    }
+
+    if [etcd][error] or [log.level] in ["error", "panic", "fatal"] {
+      mutate { add_tag => ["etcd_error"] }
+    }
+  }
+
   # Syslog
   if [app] == "syslog" {
     grok {

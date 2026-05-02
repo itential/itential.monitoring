@@ -2,13 +2,14 @@
 # GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
 # Managed by Ansible — do not edit manually
 
-- type: log
+# Etcd
+- type: journald
+  id: etcd-journald
   enabled: true
-  paths:
-    - /var/log/gateway/gateway.log
-  json.keys_under_root: true
-  json.add_error_key: true
+  seek: cursor
+  units:
+    - etcd.service
   fields:
-    app: itential-gateway-server
+    app: etcd
     environment: {{ filebeat_environment }}
   fields_under_root: true
