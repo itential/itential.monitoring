@@ -6,6 +6,7 @@ elasticsearch_version: "8.13.0"
 # Passwords (must be defined in inventory)
 elasticsearch_elastic_password: ""
 elasticsearch_logstash_writer_password: ""
+elasticsearch_grafana_reader_password: ""
 
 # Network
 elasticsearch_http_port: 9200
