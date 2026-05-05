@@ -2,7 +2,7 @@
 # GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
 ---
 - name: Deploy Filebeat to Itential app nodes
-  hosts: redis*, mongodb*, platform*, iag5*
+  hosts: redis*, mongodb*, platform*, iag5*, etcd*
   become: true
   roles:
     - role: itential.monitoring.filebeat
@@ -69,3 +69,12 @@
       ansible.builtin.import_role:
         name: itential.monitoring.filebeat
         tasks_from: filebeat_itential_gateway_runner
+
+- name: Deploy Etcd Filebeat configuration
+  hosts: etcd*
+  become: true
+  tasks:
+    - name: Configure Filebeat for Etcd nodes
+      ansible.builtin.import_role:
+        name: itential.monitoring.filebeat
+        tasks_from: filebeat_etcd
