@@ -34,6 +34,7 @@ These have empty string defaults and must be set in inventory using Ansible Vaul
 |---|---|
 | `elasticsearch_elastic_password` | Password for the built-in `elastic` superuser |
 | `elasticsearch_logstash_writer_password` | Password for the `logstash_writer` user created by this role |
+| `elasticsearch_grafana_reader_password` | Password for the `grafana_reader` user created by this role |
 
 ### TLS
 
@@ -79,6 +80,7 @@ The `elasticsearch_users` task creates the following after the service is confir
 | `logstash_writer` | Role | Write access to `itential-logs-*` and `itential-failures-*` indices |
 | `logstash_writer` | User | Service account used by Logstash; password set from `elasticsearch_logstash_writer_password` |
 | `grafana_reader` | Role | Read-only access to `itential-logs-*` and `itential-failures-*` indices |
+| `grafana_reader` | User | Service account used by Grafana; password set from `elasticsearch_grafana_reader_password` |
 
 The `itential-logs-policy` ILM policy is applied separately via the `elasticsearch_apply_ilm_policy` tag.
 

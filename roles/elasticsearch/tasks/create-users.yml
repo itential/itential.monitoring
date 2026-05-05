@@ -42,9 +42,24 @@
           -u elastic:{{ elasticsearch_elastic_password }}
           -X PUT https://localhost:9200/_security/role/grafana_reader
           -H "Content-Type: application/json"
-          -d '{"indices":[{"names":["itential-logs-*","itential-failures-*"],"privileges":["read","view_index_metadata"]}]}'
+          -d '{"cluster":["monitor"],"indices":[{"names":["itential-logs-*","itential-failures-*"],"privileges":["read","view_index_metadata"]}]}'
       register: elasticsearch_grafana_role_result
       failed_when: elasticsearch_grafana_role_result.stdout_lines[-1] not in ["200", "201"]
       changed_when: (elasticsearch_grafana_role_result.stdout_lines[:-1] | join | from_json).role.created
+      no_log: true
+      run_once: true
+
+    - name: Create grafana_reader user # noqa command-instead-of-module
+      ansible.builtin.command:
+        cmd: >
+          curl -s -o /dev/null -w "%{http_code}"
+          -k
+          -u elastic:{{ elasticsearch_elastic_password }}
+          -X PUT https://localhost:9200/_security/user/grafana_reader
+          -H "Content-Type: application/json"
+          -d '{"password":"{{ elasticsearch_grafana_reader_password }}","roles":["grafana_reader"],"full_name":"Grafana Reader"}'
+      register: elasticsearch_grafana_reader_user_result
+      failed_when: elasticsearch_grafana_reader_user_result.stdout not in ["200", "201"]
+      changed_when: elasticsearch_grafana_reader_user_result.stdout == "201"
       no_log: true
       run_once: true
