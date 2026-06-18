@@ -5,7 +5,7 @@
 - type: log
   enabled: true
   paths:
-    - /home/itential/.gateway.d/gateway.log
+    - {{ filebeat_gateway_client_log_path }}
   json.keys_under_root: true
   json.add_error_key: true
   fields:

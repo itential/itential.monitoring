@@ -6,7 +6,7 @@
 - type: log
   enabled: true
   paths:
-    - /var/log/redis/sentinel.log
+    - {{ filebeat_redis_sentinel_log_path }}
   fields:
     app: redis-sentinel
     environment: {{ filebeat_environment }}

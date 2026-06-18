@@ -6,7 +6,7 @@
 - type: log
   enabled: true
   paths:
-    - /var/log/redis/redis.log
+    - {{ filebeat_redis_log_path }}
   fields:
     app: redis
     environment: {{ filebeat_environment }}

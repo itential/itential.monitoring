@@ -7,8 +7,9 @@
   id: syslog
   enabled: true
   paths:
-    - /var/log/syslog
-    - /var/log/messages
+{% for path in filebeat_syslog_log_paths %}
+    - {{ path }}
+{% endfor %}
   fields:
     app: syslog
     log_type: syslog

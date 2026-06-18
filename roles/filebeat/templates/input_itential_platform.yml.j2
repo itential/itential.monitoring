@@ -6,7 +6,7 @@
 - type: log
   enabled: true
   paths:
-    - /var/log/itential/platform/platform.log
+    - {{ filebeat_platform_main_log_path }}
   json.keys_under_root: true
   json.add_error_key: true
   fields:
@@ -18,7 +18,7 @@
 - type: log
   enabled: true
   paths:
-    - /var/log/itential/platform/webserver.log
+    - {{ filebeat_platform_web_log_path }}
   json.keys_under_root: true
   json.add_error_key: true
   fields:
@@ -30,7 +30,7 @@
 - type: log
   enabled: true
   paths:
-    - /var/log/itential/platform/[A-Z]*.log
+    - {{ filebeat_platform_service_log_path }}
   json.keys_under_root: true
   json.add_error_key: true
   fields:
