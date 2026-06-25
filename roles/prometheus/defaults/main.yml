@@ -12,9 +12,11 @@ prometheus_redis_exporter_tls_ca_cert_file: ""
 prometheus_redis_exporter_tls_skip_verification: false
 # Redis port — override if non-standard
 prometheus_redis_exporter_redis_port: 6379
-# BullMQ key group regex — auto-discovers queue names from any adapter (empty = disabled)
-prometheus_redis_exporter_check_key_groups: "^bull:([^:]+):"
-prometheus_redis_exporter_check_streams: "db0=bull:*:*:events"
+# BullMQ key group regex — auto-discovers queue names from any adapter (empty list = disabled)
+prometheus_redis_exporter_check_key_groups:
+  - "^bull:([^:]+):"
+prometheus_redis_exporter_check_streams:
+  - "db0=bull:*:*:events"
 prometheus_redis_exporter_max_distinct_key_groups: 100
 prometheus_mongodb_exporter_web_listen_port: 9216
 prometheus_itential_platform_web_listen_port: 3000
