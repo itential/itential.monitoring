@@ -4,6 +4,14 @@
 prometheus_process_exporter_web_listen_port: 9256
 prometheus_node_exporter_web_listen_port: 9100
 prometheus_redis_exporter_web_listen_port: 9121
+# Set to true when the target Redis cluster uses TLS (rediss:// scheme)
+prometheus_redis_exporter_tls_enabled: false
+# Path to the CA cert used to verify the Redis TLS certificate; ignored when tls_enabled is false
+prometheus_redis_exporter_tls_ca_cert_file: ""
+# Skip server certificate verification (set true when using self-signed certs)
+prometheus_redis_exporter_tls_skip_verification: false
+# Redis port — override if non-standard
+prometheus_redis_exporter_redis_port: 6379
 # BullMQ key group regex — auto-discovers queue names from any adapter (empty = disabled)
 prometheus_redis_exporter_check_key_groups: "^bull:([^:]+):"
 prometheus_redis_exporter_check_streams: "db0=bull:*:*:events"
