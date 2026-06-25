@@ -4,5 +4,9 @@
 prometheus_process_exporter_web_listen_port: 9256
 prometheus_node_exporter_web_listen_port: 9100
 prometheus_redis_exporter_web_listen_port: 9121
+# BullMQ key group regex — auto-discovers queue names from any adapter (empty = disabled)
+prometheus_redis_exporter_check_key_groups: "^bull:([^:]+):"
+prometheus_redis_exporter_check_streams: "db0=bull:*:*:events"
+prometheus_redis_exporter_max_distinct_key_groups: 100
 prometheus_mongodb_exporter_web_listen_port: 9216
 prometheus_itential_platform_web_listen_port: 3000

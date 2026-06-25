@@ -16,6 +16,30 @@
         - name: Gather service facts
           ansible.builtin.service_facts:
 
+        - name: Add CHECK_KEY_GROUPS to Redis exporter service file
+          ansible.builtin.lineinfile:
+            path: /etc/systemd/system/redis_exporter.service
+            insertafter: '^\[Service\]'
+            line: 'Environment="REDIS_EXPORTER_CHECK_KEY_GROUPS={{ prometheus_redis_exporter_check_key_groups }}"'
+          when: prometheus_redis_exporter_check_key_groups is defined and prometheus_redis_exporter_check_key_groups | length > 0
+          notify: Restart redis_exporter
+
+        - name: Add CHECK_STREAMS to Redis exporter service file
+          ansible.builtin.lineinfile:
+            path: /etc/systemd/system/redis_exporter.service
+            insertafter: 'Environment="REDIS_EXPORTER_CHECK_KEY_GROUPS={{ prometheus_redis_exporter_check_key_groups }}"'
+            line: 'Environment="REDIS_EXPORTER_CHECK_STREAMS={{ prometheus_redis_exporter_check_streams }}"'
+          when: prometheus_redis_exporter_check_streams is defined and prometheus_redis_exporter_check_streams | length > 0
+          notify: Restart redis_exporter
+
+        - name: Add MAX_DISTINCT_KEY_GROUPS to Redis exporter service file
+          ansible.builtin.lineinfile:
+            path: /etc/systemd/system/redis_exporter.service
+            insertafter: 'Environment="REDIS_EXPORTER_CHECK_STREAMS={{ prometheus_redis_exporter_check_streams }}"'
+            line: 'Environment="REDIS_EXPORTER_MAX_DISTINCT_KEY_GROUPS={{ prometheus_redis_exporter_max_distinct_key_groups }}"'
+          when: prometheus_redis_exporter_max_distinct_key_groups is defined
+          notify: Restart redis_exporter
+
         - name: Open Port on FirewallD Public Zone
           ansible.posix.firewalld:
             port: "{{ redis_exporter_web_listen_address.split(':') | last }}/tcp"
