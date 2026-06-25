@@ -23,9 +23,12 @@ Installs and configures Kibana for the Itential monitoring stack.
 | `kibana_server_base_path` | `""` | Base path when behind a reverse proxy (e.g. `/kibana`) |
 | `kibana_server_rewrite_base_path` | `false` | Whether Kibana should rewrite requests using the base path |
 | `kibana_tls_enabled` | `true` | Enable TLS for the Kibana server and the Elasticsearch connection |
-| `kibana_tls_cert` | `/etc/kibana/certs/kibana.crt` | Path to the server certificate (PEM) |
-| `kibana_tls_key` | `/etc/kibana/certs/kibana.key` | Path to the server private key (PEM) |
-| `kibana_tls_ca_cert` | `/etc/kibana/certs/ca.crt` | Path to the CA certificate used to verify Elasticsearch |
+| `kibana_tls_copy_certs` | `true` | Copy certificates from the control node to the target host |
+| `kibana_pki_src_dir` | `""` | Directory on the control node containing the certificate files |
+| `kibana_pki_base_dir` | `/etc/pki/kibana` | Base PKI directory on the target host |
+| `kibana_tls_cert_file` | `{{ inventory_hostname }}.crt` | Certificate filename |
+| `kibana_tls_key_file` | `{{ inventory_hostname }}.key` | Private key filename |
+| `kibana_tls_ca_file` | `ca.crt` | CA certificate filename |
 
 ## TLS
 

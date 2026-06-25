@@ -7,9 +7,17 @@
     - elasticsearch_certificates
     - elasticsearch_certs
   block:
-    - name: Create Elasticsearch TLS directory
+    - name: Create Elasticsearch PKI base directory
       ansible.builtin.file:
-        path: "{{ elasticsearch_tls_dest_dir }}"
+        path: "{{ elasticsearch_pki_base_dir }}"
+        state: directory
+        owner: "{{ elasticsearch_user }}"
+        group: "{{ elasticsearch_group }}"
+        mode: "0750"
+
+    - name: Create Elasticsearch PKI private directory
+      ansible.builtin.file:
+        path: "{{ elasticsearch_pki_private_dir }}"
         state: directory
         owner: "{{ elasticsearch_user }}"
         group: "{{ elasticsearch_group }}"
@@ -20,8 +28,8 @@
       block:
         - name: Copy the CA certificate file
           ansible.builtin.copy:
-            src: "{{ elasticsearch_tls_ca_cert_src }}"
-            dest: "{{ elasticsearch_tls_ca_cert_dest }}"
+            src: "{{ elasticsearch_tls_ca_src }}"
+            dest: "{{ elasticsearch_tls_ca_dest }}"
             mode: "0644"
             owner: "{{ elasticsearch_user }}"
             group: "{{ elasticsearch_group }}"
@@ -44,7 +52,7 @@
 
     - name: Add Itential CA to system trust store (RedHat)
       ansible.builtin.copy:
-        src: "{{ elasticsearch_tls_ca_cert_dest }}"
+        src: "{{ elasticsearch_tls_ca_dest }}"
         dest: /etc/pki/ca-trust/source/anchors/itential-ca.crt
         remote_src: true
         owner: root
@@ -54,7 +62,7 @@
 
     - name: Add Itential CA to system trust store (Debian)
       ansible.builtin.copy:
-        src: "{{ elasticsearch_tls_ca_cert_dest }}"
+        src: "{{ elasticsearch_tls_ca_dest }}"
         dest: /usr/local/share/ca-certificates/itential-ca.crt
         remote_src: true
         owner: root

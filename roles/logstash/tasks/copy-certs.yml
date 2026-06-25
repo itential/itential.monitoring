@@ -7,9 +7,17 @@
     - logstash_certificates
     - logstash_certs
   block:
-    - name: Create Logstash TLS directory
+    - name: Create Logstash PKI base directory
       ansible.builtin.file:
-        path: "{{ logstash_tls_dest_dir }}"
+        path: "{{ logstash_pki_base_dir }}"
+        state: directory
+        owner: "{{ logstash_user }}"
+        group: "{{ logstash_group }}"
+        mode: "0750"
+
+    - name: Create Logstash PKI private directory
+      ansible.builtin.file:
+        path: "{{ logstash_pki_private_dir }}"
         state: directory
         owner: "{{ logstash_user }}"
         group: "{{ logstash_group }}"
@@ -20,8 +28,8 @@
       block:
         - name: Copy the CA certificate file
           ansible.builtin.copy:
-            src: "{{ logstash_tls_ca_cert_src }}"
-            dest: "{{ logstash_tls_ca_cert_dest }}"
+            src: "{{ logstash_tls_ca_src }}"
+            dest: "{{ logstash_tls_ca_dest }}"
             mode: "0644"
             owner: "{{ logstash_user }}"
             group: "{{ logstash_group }}"

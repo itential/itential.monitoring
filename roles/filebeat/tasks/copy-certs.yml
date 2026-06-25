@@ -7,9 +7,17 @@
     - filebeat_certificates
     - filebeat_certs
   block:
-    - name: Create Filebeat TLS directory
+    - name: Create Filebeat PKI base directory
       ansible.builtin.file:
-        path: "{{ filebeat_tls_dest_dir }}"
+        path: "{{ filebeat_pki_base_dir }}"
+        state: directory
+        owner: "{{ filebeat_user }}"
+        group: "{{ filebeat_group }}"
+        mode: "0750"
+
+    - name: Create Filebeat PKI private directory
+      ansible.builtin.file:
+        path: "{{ filebeat_pki_private_dir }}"
         state: directory
         owner: "{{ filebeat_user }}"
         group: "{{ filebeat_group }}"
@@ -20,8 +28,8 @@
       block:
         - name: Copy the CA certificate file
           ansible.builtin.copy:
-            src: "{{ filebeat_tls_ca_cert_src }}"
-            dest: "{{ filebeat_tls_ca_cert_dest }}"
+            src: "{{ filebeat_tls_ca_src }}"
+            dest: "{{ filebeat_tls_ca_dest }}"
             mode: "0644"
             owner: "{{ filebeat_user }}"
             group: "{{ filebeat_group }}"

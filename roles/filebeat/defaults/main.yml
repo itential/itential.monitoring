@@ -21,17 +21,19 @@ filebeat_service_name: filebeat
 # TLS — secures the connection to Logstash or Elasticsearch
 filebeat_tls_enabled: true
 filebeat_tls_copy_certs: true
-filebeat_tls_src_dir: ""
-filebeat_tls_dest_dir: /etc/pki/filebeat
-filebeat_tls_cert_filename: "{{ inventory_hostname }}.crt"
-filebeat_tls_cert_src: "{{ filebeat_tls_src_dir }}/{{ filebeat_tls_cert_filename }}"
-filebeat_tls_cert_dest: "{{ filebeat_tls_dest_dir }}/{{ filebeat_tls_cert_filename }}"
-filebeat_tls_key_filename: "{{ inventory_hostname }}.key"
-filebeat_tls_key_src: "{{ filebeat_tls_src_dir }}/{{ filebeat_tls_key_filename }}"
-filebeat_tls_key_dest: "{{ filebeat_tls_dest_dir }}/{{ filebeat_tls_key_filename }}"
-filebeat_tls_ca_cert_filename: ca.crt
-filebeat_tls_ca_cert_src: "{{ filebeat_tls_src_dir }}/{{ filebeat_tls_ca_cert_filename }}"
-filebeat_tls_ca_cert_dest: "{{ filebeat_tls_dest_dir }}/{{ filebeat_tls_ca_cert_filename }}"
+filebeat_pki_src_dir: ""
+filebeat_pki_base_dir: /etc/pki/filebeat
+filebeat_pki_private_subdir: private
+filebeat_pki_private_dir: "{{ filebeat_pki_base_dir }}/{{ filebeat_pki_private_subdir }}"
+filebeat_tls_cert_file: "{{ inventory_hostname }}.crt"
+filebeat_tls_cert_src: "{{ filebeat_pki_src_dir }}/{{ filebeat_tls_cert_file }}"
+filebeat_tls_cert_dest: "{{ filebeat_pki_base_dir }}/{{ filebeat_tls_cert_file }}"
+filebeat_tls_key_file: "{{ inventory_hostname }}.key"
+filebeat_tls_key_src: "{{ filebeat_pki_src_dir }}/{{ filebeat_tls_key_file }}"
+filebeat_tls_key_dest: "{{ filebeat_pki_private_dir }}/{{ filebeat_tls_key_file }}"
+filebeat_tls_ca_file: ca.crt
+filebeat_tls_ca_src: "{{ filebeat_pki_src_dir }}/{{ filebeat_tls_ca_file }}"
+filebeat_tls_ca_dest: "{{ filebeat_pki_base_dir }}/{{ filebeat_tls_ca_file }}"
 
 # Output — mutually exclusive; set only one
 # Send to Logstash (default)

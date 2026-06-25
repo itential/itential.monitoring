@@ -20,9 +20,12 @@ Installs and configures Logstash for the Itential monitoring stack.
 | `logstash_log_path` | `/var/log/logstash` | Log directory |
 | `logstash_beats_port` | `5044` | Port for the Beats input |
 | `logstash_tls_enabled` | `true` | Enable TLS for the Beats input and the Elasticsearch output |
-| `logstash_tls_cert` | `/etc/logstash/certs/logstash.crt` | Path to the server certificate presented to Beats (PEM) |
-| `logstash_tls_key` | `/etc/logstash/certs/logstash.key` | Path to the server private key (PEM) |
-| `logstash_tls_ca_cert` | `/etc/logstash/certs/ca.crt` | Path to the CA certificate used to verify Elasticsearch |
+| `logstash_tls_copy_certs` | `true` | Copy certificates from the control node to the target host |
+| `logstash_pki_src_dir` | `""` | Directory on the control node containing the certificate files |
+| `logstash_pki_base_dir` | `/etc/pki/logstash` | Base PKI directory on the target host |
+| `logstash_tls_cert_file` | `{{ inventory_hostname }}.crt` | Certificate filename |
+| `logstash_tls_key_file` | `{{ inventory_hostname }}.key` | Private key filename |
+| `logstash_tls_ca_file` | `ca.crt` | CA certificate filename |
 | `logstash_elasticsearch_hosts` | `["https://localhost:9200"]` | Elasticsearch output hosts |
 | `logstash_keystore_password` | `""` | Password for the Logstash keystore — **must be overridden** (use Ansible Vault) |
 | `logstash_elastic_password` | `""` | Password for the `logstash_writer` Elasticsearch user — **must be overridden** (use Ansible Vault) |
