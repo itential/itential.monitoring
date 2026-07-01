@@ -50,7 +50,7 @@
             owner: "{{ elasticsearch_user }}"
             group: "{{ elasticsearch_group }}"
 
-    - name: Add Itential CA to system trust store (RedHat)
+    - name: Add Itential CA to system trust store
       ansible.builtin.copy:
         src: "{{ elasticsearch_tls_ca_dest }}"
         dest: /etc/pki/ca-trust/source/anchors/itential-ca.crt
@@ -58,26 +58,8 @@
         owner: root
         group: root
         mode: '0644'
-      when: ansible_os_family == "RedHat"
 
-    - name: Add Itential CA to system trust store (Debian)
-      ansible.builtin.copy:
-        src: "{{ elasticsearch_tls_ca_dest }}"
-        dest: /usr/local/share/ca-certificates/itential-ca.crt
-        remote_src: true
-        owner: root
-        group: root
-        mode: '0644'
-      when: ansible_os_family == "Debian"
-
-    - name: Update system CA trust store (RedHat)
+    - name: Update system CA trust store
       ansible.builtin.command:
         cmd: update-ca-trust extract
       changed_when: false
-      when: ansible_os_family == "RedHat"
-
-    - name: Update system CA trust store (Debian)
-      ansible.builtin.command:
-        cmd: update-ca-certificates
-      changed_when: false
-      when: ansible_os_family == "Debian"

@@ -19,7 +19,7 @@ The configure block manages the keystore in this order:
 2. Create keystore (skipped if file exists) — protected by `logstash_keystore_password`
 3. Remove existing `ELASTIC_PASSWORD` key (always runs, `failed_when: false`)
 4. Add `ELASTIC_PASSWORD` with the value of `logstash_elastic_password`
-5. Write `LOGSTASH_KEYSTORE_PASS` to the service environment file (`/etc/sysconfig/logstash` on RHEL, `/etc/default/logstash` on Debian) so the service can decrypt the keystore at startup
+5. Write `LOGSTASH_KEYSTORE_PASS` to `/etc/sysconfig/logstash` so the service can decrypt the keystore at startup
 
 The pipeline template references `${ELASTIC_PASSWORD}`, which Logstash resolves from the keystore at runtime.
 
@@ -36,7 +36,7 @@ Both of these have empty string defaults and will cause the keystore create to f
 The pipeline at `/etc/logstash/conf.d/itential.conf` routes by the `app` field set by Filebeat inputs. Automation failures are dual-written to `itential-failures-<date>`. All events go to `itential-logs-<app>-<date>`.
 
 ## OS support
-Supports both RHEL/CentOS (`rpm_key` + `yum_repository`) and Debian/Ubuntu (`apt_key` + `apt_repository`). All package tasks are guarded with `when: ansible_os_family == "RedHat/Debian"`. The service environment file path is selected per OS family in the keystore task.
+RHEL/CentOS only. Package install uses `rpm_key` + `yum_repository`. Keystore password is written to `/etc/sysconfig/logstash`.
 
 ## Known gaps
 - The `logstash_writer` Elasticsearch user is not created by any role or playbook. Authentication worked in testing without it, which suggests the Elasticsearch security configuration may allow it — this should be investigated.

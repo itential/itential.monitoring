@@ -4,7 +4,7 @@ Installs and configures Logstash for the Itential monitoring stack.
 
 ## Requirements
 
-- RHEL/CentOS 8+ or Debian/Ubuntu
+- RHEL/CentOS 8+
 - Systemd
 - Internet access to the Elastic package repository (or a local mirror)
 - Java is bundled with the Logstash package — no separate JDK required
@@ -48,7 +48,7 @@ The role manages the Logstash keystore automatically:
 
 1. Creates `/etc/logstash/logstash.keystore` if it does not exist, protected by `logstash_keystore_password`.
 2. Stores `logstash_elastic_password` in the keystore under the key `ELASTIC_PASSWORD`.
-3. Writes `LOGSTASH_KEYSTORE_PASS` to the service environment file (`/etc/sysconfig/logstash` on RHEL, `/etc/default/logstash` on Debian) so Logstash can decrypt the keystore at startup.
+3. Writes `LOGSTASH_KEYSTORE_PASS` to `/etc/sysconfig/logstash` so Logstash can decrypt the keystore at startup.
 
 The pipeline template references `${ELASTIC_PASSWORD}` which Logstash resolves from the keystore at runtime.
 

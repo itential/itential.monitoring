@@ -27,7 +27,7 @@ Certificates must be pre-placed on the host before the play runs. The role does 
 Set `kibana_server_base_path` to a non-empty string to enable the `server.basePath` / `server.rewriteBasePath` block. When empty (default), neither setting is written to `kibana.yml`.
 
 ## OS support
-Supports both RHEL/CentOS (`rpm_key` + `yum_repository`) and Debian/Ubuntu (`apt_key` + `apt_repository`). All package tasks are guarded with `when: ansible_os_family == "RedHat/Debian"`.
+RHEL/CentOS only. Package install uses `rpm_key` + `yum_repository`.
 
 ## Variables that must be overridden
 - `kibana_elasticsearch_hosts` — should point to the actual Elasticsearch host(s), not localhost

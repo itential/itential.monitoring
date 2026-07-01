@@ -321,8 +321,7 @@ Before running the ELK playbooks:
 
 - Ansible 2.12 or later installed on the control node
 - The `itential.monitoring` collection installed
-- Target hosts running RHEL/CentOS 8+ or Debian/Ubuntu (Filebeat, Logstash,
-  Elasticsearch, Kibana all support both OS families)
+- Target hosts running RHEL/CentOS 8+
 - Internet access to `artifacts.elastic.co` on target hosts, or Elastic packages
   mirrored in a local Nexus repository for air-gapped environments
 - TLS certificates for each component generated and distributed to the target hosts

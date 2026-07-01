@@ -37,7 +37,7 @@ Only one output should be enabled at a time. `filebeat_output_logstash_enabled: 
 `filebeat_tls_enabled` adds an `ssl` block to whichever output is active, providing the CA cert, client cert, and client key for mutual TLS. Certs must be pre-placed before the play runs.
 
 ## OS support
-Supports both RHEL/CentOS (`rpm_key` + `yum_repository`) and Debian/Ubuntu (`apt_key` + `apt_repository`). All package tasks are guarded with `when: ansible_os_family == "RedHat/Debian"`.
+RHEL/CentOS only. Package install uses `rpm_key` + `yum_repository`.
 
 ## Variables that should be overridden
 - `filebeat_environment` — defaults to `"unset"`; should be set to `production`, `staging`, etc.

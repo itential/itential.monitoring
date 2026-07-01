@@ -4,7 +4,7 @@ Installs and configures Elasticsearch for the Itential monitoring stack.
 
 ## Requirements
 
-- RHEL/CentOS 8+ or Debian/Ubuntu
+- RHEL/CentOS 8+
 - Systemd
 - Internet access to the Elastic package repository (or a local mirror)
 

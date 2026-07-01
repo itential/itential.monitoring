@@ -20,22 +20,9 @@
         enabled: true
       when: ansible_os_family == "RedHat"
 
-    - name: Add Elastic APT GPG key
-      ansible.builtin.apt_key:
-        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-        state: present
-      when: ansible_os_family == "Debian"
-
-    - name: Add Filebeat APT repository
-      ansible.builtin.apt_repository:
-        repo: "deb https://artifacts.elastic.co/packages/{{ filebeat_version.split('.')[0] }}.x/apt stable main"
-        state: present
-        filename: filebeat
-      when: ansible_os_family == "Debian"
-
     - name: Install Filebeat package
       ansible.builtin.package:
-        name: "filebeat{% if ansible_os_family == 'RedHat' %}-{{ filebeat_version }}{% endif %}"
+        name: "filebeat-{{ filebeat_version }}"
         state: present
 
 - name: Configure Filebeat
