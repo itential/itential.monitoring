@@ -6,7 +6,9 @@
 - type: log
   enabled: true
   paths:
-    - {{ filebeat_redis_log_path }}
+{% for path in filebeat_redis_log_paths %}
+    - {{ path }}
+{% endfor %}
   fields:
     app: redis
     environment: {{ filebeat_environment }}
