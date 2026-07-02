@@ -2,38 +2,15 @@
 # GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
 # Managed by Ansible — do not edit manually
 
-# --- IAP main platform process ---
+{% for entry in filebeat_platform_log_paths %}
 - type: log
   enabled: true
   paths:
-    - {{ filebeat_platform_main_log_path }}
+    - {{ entry.path }}
   json.keys_under_root: true
   json.add_error_key: true
   fields:
-    app: itential-platform-main
+    app: {{ entry.app }}
     environment: {{ filebeat_environment }}
   fields_under_root: true
-
-# --- IAP webserver (HTTP API layer) ---
-- type: log
-  enabled: true
-  paths:
-    - {{ filebeat_platform_web_log_path }}
-  json.keys_under_root: true
-  json.add_error_key: true
-  fields:
-    app: itential-platform-web
-    environment: {{ filebeat_environment }}
-  fields_under_root: true
-
-# --- IAP sub-process logs (all capital-letter named files) ---
-- type: log
-  enabled: true
-  paths:
-    - {{ filebeat_platform_service_log_path }}
-  json.keys_under_root: true
-  json.add_error_key: true
-  fields:
-    app: itential-platform-service
-    environment: {{ filebeat_environment }}
-  fields_under_root: true
+{% endfor %}
