@@ -290,7 +290,6 @@ all:
         <MONGODB-HOST-1>:
         <MONGODB-HOST-N>:
     vars:
-      mongodb_replication_enabled: true
       mongodb_exporter_global_conn_pool: true
 ```
 

@@ -33,19 +33,15 @@
   become: true
   roles:
     - role: prometheus.prometheus.mongodb_exporter
-      vars:
-        mongodb_exporter_collectors: all
       tags: mongodb_exporter_install
   tasks:
     - name: Make custom configuration changes
       tags: mongodb_exporter_custom_config
       block:
-
         - name: Add MongoDB authentication properties to MongoDB exporter
           when: mongodb_exporter_admin_password is defined
           notify: Restart mongodb_exporter
           block:
-
             - name: Add the MongoDB user to the systemd service file
               ansible.builtin.lineinfile:
                 path: /etc/systemd/system/mongodb_exporter.service
