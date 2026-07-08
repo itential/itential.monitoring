@@ -75,7 +75,8 @@ filebeat_gateway_client_log_paths:
   - "{{ filebeat_gateway_client_log_dir }}/gateway.log"
 
 filebeat_mongodb_log_dir: mongodb
-filebeat_mongodb_log_path: "{{ filebeat_log_dir }}/{{ filebeat_mongodb_log_dir }}/mongod.log"
+filebeat_mongodb_log_paths:
+  - "{{ filebeat_log_dir }}/{{ filebeat_mongodb_log_dir }}/mongod.log"
 
 filebeat_redis_log_dir: redis
 filebeat_redis_log_paths:

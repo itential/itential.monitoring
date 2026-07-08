@@ -6,7 +6,9 @@
 - type: log
   enabled: true
   paths:
-    - {{ filebeat_mongodb_log_path }}
+{% for path in filebeat_mongodb_log_paths %}
+    - {{ path }}
+{% endfor %}
   fields:
     app: mongodb
     environment: {{ filebeat_environment }}
