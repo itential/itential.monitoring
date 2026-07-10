@@ -5,7 +5,9 @@
 - type: log
   enabled: true
   paths:
-    - /var/log/gateway/gateway.log
+{% for path in filebeat_gateway_runner_log_paths %}
+    - {{ path }}
+{% endfor %}
   json.keys_under_root: true
   json.add_error_key: true
   fields:

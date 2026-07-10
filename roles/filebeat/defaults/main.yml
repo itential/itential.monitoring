@@ -48,3 +48,38 @@ filebeat_output_elasticsearch_index: "filebeat-%{+YYYY.MM.dd}"
 # Kibana — used for dashboard setup
 filebeat_setup_kibana_host: "https://localhost:5601"
 filebeat_setup_dashboards_enabled: false
+
+# Log paths
+filebeat_log_dir: /var/log
+
+filebeat_syslog_log_paths:
+  - "{{ filebeat_log_dir }}/syslog"
+  - "{{ filebeat_log_dir }}/messages"
+
+filebeat_platform_log_dir: itential/platform
+filebeat_platform_log_paths:
+  - path: "{{ filebeat_log_dir }}/{{ filebeat_platform_log_dir }}/platform.log"
+    app: itential-platform-main
+  - path: "{{ filebeat_log_dir }}/{{ filebeat_platform_log_dir }}/webserver.log"
+    app: itential-platform-web
+  - path: "{{ filebeat_log_dir }}/{{ filebeat_platform_log_dir }}/[A-Z]*.log"
+    app: itential-platform-service
+
+filebeat_gateway_log_dir: gateway
+filebeat_gateway_server_log_paths:
+  - "{{ filebeat_log_dir }}/{{ filebeat_gateway_log_dir }}/gateway.log"
+filebeat_gateway_runner_log_paths:
+  - "{{ filebeat_log_dir }}/{{ filebeat_gateway_log_dir }}/gateway.log"
+filebeat_gateway_client_log_dir: /home/itential/.gateway.d
+filebeat_gateway_client_log_paths:
+  - "{{ filebeat_gateway_client_log_dir }}/gateway.log"
+
+filebeat_mongodb_log_dir: mongodb
+filebeat_mongodb_log_paths:
+  - "{{ filebeat_log_dir }}/{{ filebeat_mongodb_log_dir }}/mongod.log"
+
+filebeat_redis_log_dir: redis
+filebeat_redis_log_paths:
+  - "{{ filebeat_log_dir }}/{{ filebeat_redis_log_dir }}/redis.log"
+filebeat_redis_sentinel_log_paths:
+  - "{{ filebeat_log_dir }}/{{ filebeat_redis_log_dir }}/sentinel.log"
