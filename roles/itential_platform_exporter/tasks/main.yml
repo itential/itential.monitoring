@@ -1,0 +1,111 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+- name: Install Itential Platform Exporter
+  tags: itential_platform_exporter_install
+  block:
+    - name: Create itential_platform_exporter group
+      ansible.builtin.group:
+        name: "{{ itential_platform_exporter_group }}"
+        system: true
+
+    - name: Create itential_platform_exporter user
+      ansible.builtin.user:
+        name: "{{ itential_platform_exporter_user }}"
+        group: "{{ itential_platform_exporter_group }}"
+        system: true
+        shell: /sbin/nologin
+        home: "{{ itential_platform_exporter_config_dir }}"
+        create_home: false
+
+    - name: Ensure config directory exists
+      ansible.builtin.file:
+        path: "{{ itential_platform_exporter_config_dir }}"
+        state: directory
+        owner: "{{ itential_platform_exporter_user }}"
+        group: "{{ itential_platform_exporter_group }}"
+        mode: "0750"
+
+    - name: Check installed Itential Platform Exporter version
+      ansible.builtin.command:
+        cmd: "{{ itential_platform_exporter_install_dir }}/{{ itential_platform_exporter_binary_name }} --version"
+      register: itential_platform_exporter_installed_version
+      changed_when: false
+      failed_when: false
+
+    - name: Download and install Itential Platform Exporter binary
+      when: itential_platform_exporter_version not in (itential_platform_exporter_installed_version.stdout | default(''))
+      block:
+        - name: Download Itential Platform Exporter binary
+          ansible.builtin.get_url:
+            url: "https://github.com/itential/job-metrics-exporter/releases/download/v{{ itential_platform_exporter_version }}/itential-job-metrics-exporter-linux-{{ itential_platform_exporter_arch }}"
+            dest: "{{ itential_platform_exporter_install_dir }}/{{ itential_platform_exporter_binary_name }}"
+            owner: root
+            group: root
+            mode: "0755"
+          notify: Restart Itential Platform Exporter
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Open Itential Platform Exporter port in firewall
+      ansible.posix.firewalld:
+        port: "{{ itential_platform_exporter_port }}/tcp"
+        permanent: true
+        state: enabled
+        zone: public
+        immediate: true
+      when:
+        - ansible_facts.services["firewalld.service"] is defined
+        - ansible_facts.services["firewalld.service"].state == "running"
+        - ansible_facts.services["firewalld.service"].status == "enabled"
+
+- name: Configure Itential Platform Exporter
+  tags: itential_platform_exporter_configure
+  block:
+    - name: Deploy config.yaml
+      ansible.builtin.template:
+        src: config.yaml.j2
+        dest: "{{ itential_platform_exporter_config_dir }}/config.yaml"
+        owner: "{{ itential_platform_exporter_user }}"
+        group: "{{ itential_platform_exporter_group }}"
+        mode: "0640"
+      notify: Restart Itential Platform Exporter
+
+    - name: Deploy Itential Platform Exporter systemd service
+      ansible.builtin.template:
+        src: itential-job-metrics-exporter.service.j2
+        dest: "/etc/systemd/system/{{ itential_platform_exporter_service_name }}.service"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart Itential Platform Exporter
+
+- name: Ensure Itential Platform Exporter is running
+  tags: always
+  block:
+    - name: Flush all handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start Itential Platform Exporter
+      ansible.builtin.systemd:
+        name: "{{ itential_platform_exporter_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Assert that Itential Platform Exporter is running
+      ansible.builtin.systemd:
+        name: "{{ itential_platform_exporter_service_name }}"
+      register: itential_platform_exporter_status
+      failed_when: itential_platform_exporter_status.status.ActiveState != "active"
+
+    - name: Wait for Itential Platform Exporter to be ready
+      ansible.builtin.uri:
+        url: "{{ 'https' if itential_platform_exporter_tls_enabled | bool else 'http' }}://localhost:{{ itential_platform_exporter_port }}{{ itential_platform_exporter_metrics_path }}"
+        validate_certs: false
+        status_code: 200
+      register: itential_platform_exporter_ready
+      until: itential_platform_exporter_ready.status == 200
+      retries: 12
+      delay: 5

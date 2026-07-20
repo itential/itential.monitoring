@@ -1,0 +1,47 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Itential Job Metrics Prometheus Exporter
+Documentation=https://github.com/itential/job-metrics-exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ itential_platform_exporter_user }}
+Group={{ itential_platform_exporter_group }}
+
+ExecStart={{ itential_platform_exporter_install_dir }}/{{ itential_platform_exporter_binary_name }} \
+    --config {{ itential_platform_exporter_config_dir }}/config.yaml
+
+# Restart on failure. StartLimitBurst caps restarts to 5 attempts per
+# StartLimitIntervalSec window to avoid hammering MongoDB during an outage.
+Restart=on-failure
+RestartSec=10s
+StartLimitIntervalSec=120s
+StartLimitBurst=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=itential-job-metrics-exporter
+
+# Security hardening — safe for a stateless HTTP server process that only
+# needs outbound TCP to MongoDB and inbound TCP for scrapes.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadOnlyPaths={{ itential_platform_exporter_config_dir }}
+
+[Install]
+WantedBy=multi-user.target

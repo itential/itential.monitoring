@@ -19,6 +19,7 @@ Thin wrapper around the community `prometheus.prometheus.prometheus` role that a
 | `gateway` | `node_exporter`, `process_exporter` |
 | `mongodb` | `node_exporter`, `mongo_exporter` |
 | `redis_*` (all groups matching `^redis_.*`) | `node_exporter`, `redis_exporter` |
+| `itential_platform_exporter` | `itential_platform_exporter` |
 | `vault` | `node_exporter` |
 
 The scrape config file is written to `{{ prometheus_config_dir }}/scrape_configs/itential.yml`. `prometheus_config_dir` is provided by the upstream `prometheus.prometheus.prometheus` role.
@@ -29,6 +30,9 @@ Each exporter target uses `inventory_hostname:default_port` unless the host defi
 - `process_exporter_web_listen_address`
 - `redis_exporter_web_listen_address`
 - `mongodb_exporter_web_listen_address`
+- `itential_platform_exporter_web_listen_address` — note this is a scrape-target-only override,
+  distinct from the `itential_platform_exporter` role's own `itential_platform_exporter_listen_address`
+  variable (which configures the exporter's actual bind address, e.g. `:9477`)
 
 When the override is set, its full value (host:port) is used as-is.
 
