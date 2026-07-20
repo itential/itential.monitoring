@@ -191,6 +191,13 @@ The `itential.monitoring` uses the following community Prometheus exporter roles
 - [`prometheus.prometheus.node_exporter`](https://prometheus-community.github.io/ansible/branch/main/node_exporter_role.html#ansible-collections-prometheus-prometheus-node-exporter-role)
 - [`prometheus.prometheus.process_exporter`](https://prometheus-community.github.io/ansible/branch/main/process_exporter_role.html#ansible-collections-prometheus-prometheus-process-exporter-role)
 
+In addition, `itential.monitoring` ships its own exporter role — the `itential.monitoring.itential_platform_exporter` role installs the
+[itential-job-metrics-exporter](https://github.com/itential/job-metrics-exporter), which connects
+directly to the Itential Platform MongoDB replica set and exposes job/task lifecycle metrics.
+Unlike the exporters above, it is downloaded from GitHub releases rather than installed via the
+`prometheus.prometheus` collection. Refer to the [role README](roles/itential_platform_exporter/README.md)
+for full configuration details and MongoDB prerequisites.
+
 Each exporter is a lightweight Go application that exposes the metrics on a standard HTTP endpoint. Each exporter requires a port to be opened so that Prometheus can access the metrics that are being exposed by the exporter. The following ports will be utilized by these roles:
 
 | Exporter | Default Port | Description |
@@ -199,6 +206,7 @@ Each exporter is a lightweight Go application that exposes the metrics on a stan
 | [process exporter](https://github.com/ncabatoff/process-exporter) | 9256 | The process exporter is installed on `platform` and `gateway` hosts and will expose individual processes from Itential Platform and IAG. |
 | [mongodb exporter](https://github.com/percona/mongodb_exporter) | 9216 | The mongo exporter is installed on `mongodb` hosts and will expose information about the MongoDB installation and any replica sets. |
 | [redis exporter](https://github.com/oliver006/redis_exporter) | 9121 | The redis exporter is installed on `redis` hosts and will expose information about the Redis installation and any replica sets. |
+| [itential platform exporter](https://github.com/itential/job-metrics-exporter) | 9477 | The Itential Platform exporter is installed on `itential_platform_exporter` hosts and will expose job/task lifecycle metrics read from the Itential Platform MongoDB replica set. |
 
 #### Process Exporter Notes
 
@@ -267,8 +275,9 @@ All Prometheus variables are handled by the `prometheus.prometheus.prometheus` r
 
 ### Exporters Role Variables
 
-All exporter variables are handled by the exporter roles. Refer to the documentation links in the
-[Exporter Roles](#exporter-roles) section.
+All community exporter variables are handled by the exporter roles. Refer to the documentation
+links in the [Exporter Roles](#exporter-roles) section. The `itential_platform_exporter` role's
+variables are its own — see [Itential Platform Exporter Role Variables](#itential-platform-exporter-role-variables) below.
 
 ### Redis Exporter Requirements
 
@@ -336,6 +345,21 @@ all:
 | `alloy_extra_groups` | List | Extra OS groups to add the alloy user to for log file read access. Pre-configured for `mongodb*` and `iag5*` groups. | `[]` |
 | `alloy_tls_enabled` | Boolean | Enable TLS for the Alloy → Loki push connection | `false` |
 | `alloy_tls_ca_file` | String | Path to the CA certificate used to verify the Loki server cert (required when `alloy_tls_enabled: true`) | `/etc/alloy/certs/ca.crt` |
+
+### Itential Platform Exporter Role Variables
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `itential_platform_exporter_version` | String | Exporter version to install | `1.0.1` |
+| `itential_platform_exporter_listen_address` | String | Address/port the exporter listens on | `:9477` |
+| `itential_platform_exporter_mongo_uri` | String | Full MongoDB connection string (takes precedence over the individual `_mongo_host`/`_mongo_port`/... fields) | `""` |
+| `itential_platform_exporter_mongo_password` | String | MongoDB password — **must be set via Ansible Vault** | `""` |
+| `itential_platform_exporter_tls_enabled` | Boolean | Enable TLS on the exporter's own HTTP listener | `false` |
+| `itential_platform_exporter_change_stream_enabled` | Boolean | Enable real-time MongoDB change stream counters (requires a replica set) | `true` |
+| `itential_platform_exporter_polling_enabled` | Boolean | Enable background aggregation polling (use when change streams are unavailable) | `false` |
+
+See the [role README](roles/itential_platform_exporter/README.md) for the full variable list and
+required MongoDB setup steps (dedicated read-only user and indexes).
 
 ## Building Your Inventory
 
@@ -461,7 +485,8 @@ all:
 ### Prometheus / Grafana Inventory
 
 To install and configure Prometheus and Grafana, add `prometheus` and `grafana` groups and hosts to
-your inventory (in addition to the other Itential-related groups and hosts).
+your inventory (in addition to the other Itential-related groups and hosts). To also install the
+Itential Platform Exporter, add an `itential_platform_exporter` group and host.
 
 ### Example Inventory
 
@@ -510,6 +535,12 @@ all:
             - cmdline:
                 - python3.9
           {% endraw %}
+
+    itential_platform_exporter:
+      hosts:
+        <EXPORTER-HOST>:
+      vars:
+        itential_platform_exporter_mongo_uri: "mongodb://prometheus:<MONGODB-PROMETHEUS-PASSWORD>@<MONGODB-HOST-1>:27017,<MONGODB-HOST-N>:27017/itential?replicaSet=rs0&authSource=admin"
 
     prometheus:
       hosts:
@@ -663,4 +694,5 @@ You can also selectively execute portions of the role by using the following tag
 | `process_exporter_install` | This will execute the tasks to install the process exporter. The process exporter is installed on `platform` and `gateway` hosts. |
 | `mongodb_exporter_install` | This will execute the tasks to install the mongo exporter. The mongo exporter is installed on `mongodb` hosts. |
 | `redis_exporter_install` | This will execute the tasks to install the redis exporter. The redis exporter is installed on `redis` hosts. |
+| `itential_platform_exporter_install` | This will execute the tasks to install the Itential Platform exporter. It is installed on `itential_platform_exporter` hosts. |
 | `grafana_install` | This will execute the tasks to install Grafana. |

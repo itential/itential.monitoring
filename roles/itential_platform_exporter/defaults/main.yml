@@ -1,0 +1,62 @@
+# Copyright (c) 2026, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+itential_platform_exporter_version: "1.0.1"
+itential_platform_exporter_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+
+# Network
+itential_platform_exporter_listen_address: ":9477"
+itential_platform_exporter_metrics_path: "/metrics"
+itential_platform_exporter_port: "{{ itential_platform_exporter_listen_address.split(':') | last }}"
+
+# Filesystem paths
+itential_platform_exporter_config_dir: /etc/itential-job-metrics-exporter
+itential_platform_exporter_install_dir: /usr/local/bin
+itential_platform_exporter_binary_name: itential-job-metrics-exporter
+
+# System user/group
+itential_platform_exporter_user: itential_platform_exporter
+itential_platform_exporter_group: itential_platform_exporter
+
+# Service
+itential_platform_exporter_service_name: itential-job-metrics-exporter
+
+# MongoDB connection.
+# Set itential_platform_exporter_mongo_uri to use a full connection string (recommended
+# for replica sets). When unset, the individual host/port/username/... fields below are used.
+itential_platform_exporter_mongo_uri: ""
+itential_platform_exporter_mongo_host: "localhost"
+itential_platform_exporter_mongo_port: 27017
+itential_platform_exporter_mongo_username: "prometheus"
+itential_platform_exporter_mongo_password: ""
+itential_platform_exporter_mongo_database: "itential"
+itential_platform_exporter_mongo_auth_source: "admin"
+
+# MongoDB TLS
+itential_platform_exporter_mongo_tls_enabled: false
+itential_platform_exporter_mongo_tls_ca_file: "{{ itential_platform_exporter_config_dir }}/ca.pem"
+itential_platform_exporter_mongo_tls_insecure_skip_verify: false
+
+# Exporter TLS — server-side TLS for the HTTP listener.
+# Certs must be pre-placed on the host; this role does not deploy them.
+itential_platform_exporter_tls_enabled: false
+itential_platform_exporter_tls_cert_file: "{{ itential_platform_exporter_config_dir }}/server.crt"
+itential_platform_exporter_tls_key_file: "{{ itential_platform_exporter_config_dir }}/server.key"
+
+# Logging
+itential_platform_exporter_log_level: "info"
+itential_platform_exporter_log_format: "json"
+
+# Timeout for the one-time bootstrap poll run at startup when change_stream is enabled
+itential_platform_exporter_slow_query_timeout: "4m"
+
+# Real-time change stream counters. Requires MongoDB to run as a replica set.
+itential_platform_exporter_change_stream_enabled: true
+itential_platform_exporter_change_stream_initial_load: true
+itential_platform_exporter_change_stream_initial_load_timeout: "2m"
+
+# Background aggregation polling. Use when change streams are not available
+# (MongoDB not running as a replica set). Ignored when change_stream is enabled.
+itential_platform_exporter_polling_enabled: false
+itential_platform_exporter_polling_interval: "60s"
+itential_platform_exporter_polling_query_timeout: "55s"

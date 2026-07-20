@@ -1,0 +1,41 @@
+{{ ansible_managed | comment }}
+
+mongo:
+{% if itential_platform_exporter_mongo_uri %}
+  uri: "{{ itential_platform_exporter_mongo_uri }}"
+{% else %}
+  host: "{{ itential_platform_exporter_mongo_host }}"
+  port: {{ itential_platform_exporter_mongo_port }}
+  username: "{{ itential_platform_exporter_mongo_username }}"
+  password: "{{ itential_platform_exporter_mongo_password }}"
+  database: "{{ itential_platform_exporter_mongo_database }}"
+  auth_source: "{{ itential_platform_exporter_mongo_auth_source }}"
+{% endif %}
+
+  tls:
+    enabled: {{ itential_platform_exporter_mongo_tls_enabled | bool | lower }}
+    ca_file: "{{ itential_platform_exporter_mongo_tls_ca_file }}"
+    insecure_skip_verify: {{ itential_platform_exporter_mongo_tls_insecure_skip_verify | bool | lower }}
+
+exporter:
+  listen_address: "{{ itential_platform_exporter_listen_address }}"
+  metrics_path: "{{ itential_platform_exporter_metrics_path }}"
+  slow_query_timeout: "{{ itential_platform_exporter_slow_query_timeout }}"
+  tls:
+    enabled: {{ itential_platform_exporter_tls_enabled | bool | lower }}
+    cert_file: "{{ itential_platform_exporter_tls_cert_file }}"
+    key_file: "{{ itential_platform_exporter_tls_key_file }}"
+
+log:
+  level: "{{ itential_platform_exporter_log_level }}"   # debug | info | warn | error
+  format: "{{ itential_platform_exporter_log_format }}"  # json | text
+
+change_stream:
+  enabled: {{ itential_platform_exporter_change_stream_enabled | bool | lower }}
+  initial_load: {{ itential_platform_exporter_change_stream_initial_load | bool | lower }}
+  initial_load_timeout: "{{ itential_platform_exporter_change_stream_initial_load_timeout }}"
+
+polling:
+  enabled: {{ itential_platform_exporter_polling_enabled | bool | lower }}
+  interval: "{{ itential_platform_exporter_polling_interval }}"
+  query_timeout: "{{ itential_platform_exporter_polling_query_timeout }}"

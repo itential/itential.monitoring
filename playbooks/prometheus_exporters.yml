@@ -94,6 +94,13 @@
             - ansible_facts.services["firewalld.service"].state == "running"
             - ansible_facts.services["firewalld.service"].status == "enabled"
 
+- name: Install Itential Platform Exporter
+  hosts: itential_platform_exporter
+  become: true
+  roles:
+    - role: itential.monitoring.itential_platform_exporter
+      tags: itential_platform_exporter_install
+
 - name: Install process exporter
   hosts: platform*, gateway
   become: true
