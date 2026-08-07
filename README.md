@@ -198,7 +198,7 @@ Each exporter is a lightweight Go application that exposes the metrics on a stan
 | [node exporter](https://github.com/prometheus/node_exporter) | 9100 | The node exporter is installed on all Itential-related hosts and will expose system and sysadmin type metrics. |
 | [process exporter](https://github.com/ncabatoff/process-exporter) | 9256 | The process exporter is installed on `platform` and `gateway` hosts and will expose individual processes from Itential Platform and IAG. |
 | [mongodb exporter](https://github.com/percona/mongodb_exporter) | 9216 | The mongo exporter is installed on `mongodb` hosts and will expose information about the MongoDB installation and any replica sets. |
-| [redis exporter](https://github.com/oliver006/redis_exporter) | 9121 | The redis exporter is installed on `redis` hosts and will expose information about the Redis installation and any replica sets. |
+| [redis exporter](https://github.com/oliver006/redis_exporter) | 9121 | The redis exporter is installed on `redis*` hosts (including `redis_master`, `redis_replica`, and `redis_sentinel`) and will expose information about the Redis installation and any replica sets. On `redis_sentinel` hosts, it connects to the local Sentinel instance instead and exposes Sentinel-specific metrics. |
 
 #### Process Exporter Notes
 
@@ -272,9 +272,11 @@ All exporter variables are handled by the exporter roles. Refer to the documenta
 
 ### Redis Exporter Requirements
 
-In order for the Redis exporter to function, the `redis_prometheus_user_enabled` variable on the
+In order for the Redis exporter to function, the `redis_monitor_user_enabled` variable on the
 `redis` hosts must be set to `true`. By default, this variable is set to `false` and the
-`prometheus` user is not create.
+`monitor` user is not created. The same requirement applies to `redis_sentinel` hosts, where
+`redis_monitor_user_enabled` must also be set to `true` to create the `monitor` user used by the
+exporter to query Sentinel.
 
 ### MongoDB Exporter Recommendations
 
@@ -662,5 +664,5 @@ You can also selectively execute portions of the role by using the following tag
 | `node_exporter_install`  | This will execute the tasks to install the node exporter. The node exporter is installed on all Itential-related hosts and will expose system and sysadmin type metrics. |
 | `process_exporter_install` | This will execute the tasks to install the process exporter. The process exporter is installed on `platform` and `gateway` hosts. |
 | `mongodb_exporter_install` | This will execute the tasks to install the mongo exporter. The mongo exporter is installed on `mongodb` hosts. |
-| `redis_exporter_install` | This will execute the tasks to install the redis exporter. The redis exporter is installed on `redis` hosts. |
+| `redis_exporter_install` | This will execute the tasks to install the redis exporter. The redis exporter is installed on `redis*` hosts, including `redis_sentinel` hosts. |
 | `grafana_install` | This will execute the tasks to install Grafana. |
