@@ -7,9 +7,17 @@
     - kibana_certificates
     - kibana_certs
   block:
-    - name: Create Kibana TLS directory
+    - name: Create Kibana PKI base directory
       ansible.builtin.file:
-        path: "{{ kibana_tls_dest_dir }}"
+        path: "{{ kibana_pki_base_dir }}"
+        state: directory
+        owner: "{{ kibana_user }}"
+        group: "{{ kibana_group }}"
+        mode: "0750"
+
+    - name: Create Kibana PKI private directory
+      ansible.builtin.file:
+        path: "{{ kibana_pki_private_dir }}"
         state: directory
         owner: "{{ kibana_user }}"
         group: "{{ kibana_group }}"
@@ -20,8 +28,8 @@
       block:
         - name: Copy the CA certificate file
           ansible.builtin.copy:
-            src: "{{ kibana_tls_ca_cert_src }}"
-            dest: "{{ kibana_tls_ca_cert_dest }}"
+            src: "{{ kibana_tls_ca_src }}"
+            dest: "{{ kibana_tls_ca_dest }}"
             mode: "0644"
             owner: "{{ kibana_user }}"
             group: "{{ kibana_group }}"

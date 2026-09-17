@@ -4,7 +4,7 @@ Installs and configures Filebeat for the Itential monitoring stack.
 
 ## Requirements
 
-- RHEL/CentOS 8+ or Debian/Ubuntu
+- RHEL/CentOS 8+
 - Systemd
 - Internet access to the Elastic package repository (or a local mirror)
 - A running Logstash or Elasticsearch instance to receive events
@@ -19,9 +19,12 @@ Installs and configures Filebeat for the Itential monitoring stack.
 | `filebeat_log_path` | `/var/log/filebeat` | Log directory |
 | `filebeat_environment` | `unset` | Environment label attached to every event (e.g. `production`, `staging`) |
 | `filebeat_tls_enabled` | `true` | Enable TLS for the Logstash or Elasticsearch output |
-| `filebeat_tls_ca_cert` | `/etc/filebeat/certs/ca.crt` | Path to the CA certificate used to verify the output host |
-| `filebeat_tls_cert` | `/etc/filebeat/certs/filebeat.crt` | Path to the client certificate (PEM) |
-| `filebeat_tls_key` | `/etc/filebeat/certs/filebeat.key` | Path to the client private key (PEM) |
+| `filebeat_tls_copy_certs` | `true` | Copy certificates from the control node to the target host |
+| `filebeat_pki_src_dir` | `""` | Directory on the control node containing the certificate files |
+| `filebeat_pki_base_dir` | `/etc/pki/filebeat` | Base PKI directory on the target host |
+| `filebeat_tls_cert_file` | `{{ inventory_hostname }}.crt` | Certificate filename |
+| `filebeat_tls_key_file` | `{{ inventory_hostname }}.key` | Private key filename |
+| `filebeat_tls_ca_file` | `ca.crt` | CA certificate filename |
 | `filebeat_output_logstash_enabled` | `true` | Send output to Logstash |
 | `filebeat_output_logstash_hosts` | `["localhost:5044"]` | Logstash hosts |
 | `filebeat_output_elasticsearch_enabled` | `false` | Send output directly to Elasticsearch |

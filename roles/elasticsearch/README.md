@@ -4,7 +4,7 @@ Installs and configures Elasticsearch for the Itential monitoring stack.
 
 ## Requirements
 
-- RHEL/CentOS 8+ or Debian/Ubuntu
+- RHEL/CentOS 8+
 - Systemd
 - Internet access to the Elastic package repository (or a local mirror)
 
@@ -42,11 +42,11 @@ These have empty string defaults and must be set in inventory using Ansible Vaul
 |---|---|---|
 | `elasticsearch_tls_enabled` | `true` | Enable xpack security and TLS for HTTP and transport |
 | `elasticsearch_tls_copy_certs` | `true` | Copy certificates from the control node to the target host |
-| `elasticsearch_tls_src_dir` | `""` | Directory on the control node containing the certificate files |
-| `elasticsearch_tls_dest_dir` | `/etc/elasticsearch/certs` | Directory on the target host where certificates are placed |
-| `elasticsearch_tls_cert_filename` | `{{ inventory_hostname }}.crt` | Certificate filename |
-| `elasticsearch_tls_key_filename` | `{{ inventory_hostname }}.key` | Private key filename |
-| `elasticsearch_tls_ca_cert_filename` | `ca.crt` | CA certificate filename |
+| `elasticsearch_pki_src_dir` | `""` | Directory on the control node containing the certificate files |
+| `elasticsearch_pki_base_dir` | `/etc/pki/elasticsearch` | Base PKI directory on the target host |
+| `elasticsearch_tls_cert_file` | `{{ inventory_hostname }}.crt` | Certificate filename |
+| `elasticsearch_tls_key_file` | `{{ inventory_hostname }}.key` | Private key filename |
+| `elasticsearch_tls_ca_file` | `ca.crt` | CA certificate filename |
 
 ### ILM
 

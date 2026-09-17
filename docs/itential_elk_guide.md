@@ -321,8 +321,7 @@ Before running the ELK playbooks:
 
 - Ansible 2.12 or later installed on the control node
 - The `itential.monitoring` collection installed
-- Target hosts running RHEL/CentOS 8+ or Debian/Ubuntu (Filebeat, Logstash,
-  Elasticsearch, Kibana all support both OS families)
+- Target hosts running RHEL/CentOS 8+
 - Internet access to `artifacts.elastic.co` on target hosts, or Elastic packages
   mirrored in a local Nexus repository for air-gapped environments
 - TLS certificates for each component generated and distributed to the target hosts
@@ -334,13 +333,14 @@ Before running the ELK playbooks:
 
 | Host Group | Cert path variables |
 |---|---|
-| `elasticsearch` | `elasticsearch_tls_cert`, `elasticsearch_tls_key`, `elasticsearch_tls_ca_cert` |
-| `logstash` | `logstash_tls_cert`, `logstash_tls_key`, `logstash_tls_ca_cert` |
-| `kibana` | `kibana_tls_cert`, `kibana_tls_key`, `kibana_tls_ca_cert` |
-| All Filebeat hosts | `filebeat_tls_cert`, `filebeat_tls_key`, `filebeat_tls_ca_cert` |
+| `elasticsearch` | `elasticsearch_pki_base_dir`, `elasticsearch_tls_cert_file`, `elasticsearch_tls_key_file`, `elasticsearch_tls_ca_file` |
+| `logstash` | `logstash_pki_base_dir`, `logstash_tls_cert_file`, `logstash_tls_key_file`, `logstash_tls_ca_file` |
+| `kibana` | `kibana_pki_base_dir`, `kibana_tls_cert_file`, `kibana_tls_key_file`, `kibana_tls_ca_file` |
+| All Filebeat hosts | `filebeat_pki_base_dir`, `filebeat_tls_cert_file`, `filebeat_tls_key_file`, `filebeat_tls_ca_file` |
 
-All certificate path variables have defaults under `/etc/<component>/certs/`. Certificates
-should be issued from the same internal CA used for the rest of the Itential deployment.
+Certificate directories follow the `/etc/pki/<component>` standard. Private keys are placed
+in a `private/` subdirectory under the base PKI directory. Certificates should be issued
+from the same internal CA used for the rest of the Itential deployment.
 
 ---
 
@@ -411,10 +411,10 @@ same internal CA.
 
 For a minimal deployment, you need:
 
-- **Elasticsearch host:** `ca.crt`, `elasticsearch.crt`, `elasticsearch.key` under `/etc/elasticsearch/certs/`
-- **Logstash host:** `ca.crt`, `logstash.crt`, `logstash.key` under `/etc/logstash/certs/`
-- **Kibana host:** `ca.crt`, `kibana.crt`, `kibana.key` under `/etc/kibana/certs/`
-- **All Filebeat hosts:** `ca.crt`, `filebeat.crt`, `filebeat.key` under `/etc/filebeat/certs/`
+- **Elasticsearch host:** `ca.crt` and `<hostname>.crt` under `/etc/pki/elasticsearch/`; `<hostname>.key` under `/etc/pki/elasticsearch/private/`
+- **Logstash host:** `ca.crt` and `<hostname>.crt` under `/etc/pki/logstash/`; `<hostname>.key` under `/etc/pki/logstash/private/`
+- **Kibana host:** `ca.crt` and `<hostname>.crt` under `/etc/pki/kibana/`; `<hostname>.key` under `/etc/pki/kibana/private/`
+- **All Filebeat hosts:** `ca.crt` and `<hostname>.crt` under `/etc/pki/filebeat/`; `<hostname>.key` under `/etc/pki/filebeat/private/`
 
 ### Step 3 — Deploy the Full ELK Stack
 

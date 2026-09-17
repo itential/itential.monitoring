@@ -24,7 +24,7 @@ server.ssl.enabled: false
 # Elasticsearch
 elasticsearch.hosts: {{ kibana_elasticsearch_hosts | to_json }}
 {% if kibana_tls_enabled | bool %}
-elasticsearch.ssl.certificateAuthorities: ["{{ kibana_tls_ca_cert_dest }}"]
+elasticsearch.ssl.certificateAuthorities: ["{{ kibana_tls_ca_dest }}"]
 elasticsearch.ssl.verificationMode: certificate
 {% endif %}
 

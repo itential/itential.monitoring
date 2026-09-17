@@ -351,8 +351,8 @@ input {
   beats {
     port => 5044
     ssl  => true
-    ssl_certificate => "/etc/logstash/certs/logstash.crt"
-    ssl_key         => "/etc/logstash/certs/logstash.key"
+    ssl_certificate => "/etc/pki/logstash/<hostname>.crt"
+    ssl_key         => "/etc/pki/logstash/private/<hostname>.key"
   }
 }
 
@@ -451,7 +451,7 @@ output {
       index    => "itential-failures-%{+yyyy.MM.dd}"
       user     => "logstash_writer"
       password => "${ELASTIC_PASSWORD}"
-      ssl_certificate_authorities => ["/etc/logstash/certs/ca.crt"]
+      ssl_certificate_authorities => ["/etc/pki/logstash/ca.crt"]
     }
   }
 
@@ -461,7 +461,7 @@ output {
     index    => "itential-logs-%{app}-%{+yyyy.MM.dd}"
     user     => "logstash_writer"
     password => "${ELASTIC_PASSWORD}"
-    ssl_certificate_authorities => ["/etc/logstash/certs/ca.crt"]
+    ssl_certificate_authorities => ["/etc/pki/logstash/ca.crt"]
   }
 }
 ```

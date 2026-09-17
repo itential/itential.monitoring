@@ -22,7 +22,7 @@ Installs Elasticsearch from the official Elastic package repository and deploys 
 Certificates must be pre-placed on the host before the play runs. The role does not distribute certs.
 
 ## OS support
-Supports both RHEL/CentOS (`rpm_key` + `yum_repository`) and Debian/Ubuntu (`apt_key` + `apt_repository`). All package tasks are guarded with `when: ansible_os_family == "RedHat/Debian"`.
+RHEL/CentOS only. Package install uses `rpm_key` + `yum_repository`.
 
 ## User and role provisioning
 `tasks/create-users.yml` creates the `logstash_writer` role and user, the `grafana_reader` role, and applies the `itential-logs-policy` ILM policy via the Elasticsearch REST API. It runs after the service is confirmed active and is tagged `elasticsearch_users`. Both `elasticsearch_elastic_password` and `elasticsearch_logstash_writer_password` must be set (use Ansible Vault).

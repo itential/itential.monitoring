@@ -31,17 +31,19 @@ elasticsearch_heap_size: "1g"
 # all three flags must be set consistently to avoid a startup conflict.
 elasticsearch_tls_enabled: true
 elasticsearch_tls_copy_certs: true
-elasticsearch_tls_src_dir: ""
-elasticsearch_tls_dest_dir: /etc/elasticsearch/certs
-elasticsearch_tls_cert_filename: "{{ inventory_hostname }}.crt"
-elasticsearch_tls_cert_src: "{{ elasticsearch_tls_src_dir }}/{{ elasticsearch_tls_cert_filename }}"
-elasticsearch_tls_cert_dest: "{{ elasticsearch_tls_dest_dir }}/{{ elasticsearch_tls_cert_filename }}"
-elasticsearch_tls_key_filename: "{{ inventory_hostname }}.key"
-elasticsearch_tls_key_src: "{{ elasticsearch_tls_src_dir }}/{{ elasticsearch_tls_key_filename }}"
-elasticsearch_tls_key_dest: "{{ elasticsearch_tls_dest_dir }}/{{ elasticsearch_tls_key_filename }}"
-elasticsearch_tls_ca_cert_filename: ca.crt
-elasticsearch_tls_ca_cert_src: "{{ elasticsearch_tls_src_dir }}/{{ elasticsearch_tls_ca_cert_filename }}"
-elasticsearch_tls_ca_cert_dest: "{{ elasticsearch_tls_dest_dir }}/{{ elasticsearch_tls_ca_cert_filename }}"
+elasticsearch_pki_src_dir: ""
+elasticsearch_pki_base_dir: /etc/pki/elasticsearch
+elasticsearch_pki_private_subdir: private
+elasticsearch_pki_private_dir: "{{ elasticsearch_pki_base_dir }}/{{ elasticsearch_pki_private_subdir }}"
+elasticsearch_tls_cert_file: "{{ inventory_hostname }}.crt"
+elasticsearch_tls_cert_src: "{{ elasticsearch_pki_src_dir }}/{{ elasticsearch_tls_cert_file }}"
+elasticsearch_tls_cert_dest: "{{ elasticsearch_pki_base_dir }}/{{ elasticsearch_tls_cert_file }}"
+elasticsearch_tls_key_file: "{{ inventory_hostname }}.key"
+elasticsearch_tls_key_src: "{{ elasticsearch_pki_src_dir }}/{{ elasticsearch_tls_key_file }}"
+elasticsearch_tls_key_dest: "{{ elasticsearch_pki_private_dir }}/{{ elasticsearch_tls_key_file }}"
+elasticsearch_tls_ca_file: ca.crt
+elasticsearch_tls_ca_src: "{{ elasticsearch_pki_src_dir }}/{{ elasticsearch_tls_ca_file }}"
+elasticsearch_tls_ca_dest: "{{ elasticsearch_pki_base_dir }}/{{ elasticsearch_tls_ca_file }}"
 
 # System user/group created by the package
 elasticsearch_user: elasticsearch
