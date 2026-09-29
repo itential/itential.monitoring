@@ -27,6 +27,11 @@ filter {
     }
   }
 
+  # Populate top-level hostname field — used as a Loki label by the Loki output below
+  mutate {
+    add_field => { "hostname" => "%{[host][name]}" }
+  }
+
   # IAP sub-process logs
   if [app] == "itential-platform-service" {
 
@@ -118,6 +123,9 @@ filter {
     if [itential.http.url] =~ "/jobs/" {
       grok {
         match => { "itential.http.url" => "/jobs/%{WORD:itential.iap_job_id}" }
+      }
+      mutate {
+        copy => { "itential.iap_job_id" => "itential.job.id" }
       }
     }
 
@@ -329,7 +337,13 @@ filter {
     # durationMillis is present on any operation that exceeded slowOpThresholdMs.
     # Check before serializing attr to a string.
     if [mongodb][attr][durationMillis] {
-      mutate { add_tag => ["slow_query"] }
+      mutate {
+        add_tag => ["slow_query"]
+        copy    => { "[mongodb][attr][durationMillis]" => "[mongodb][duration_ms]" }
+      }
+      mutate {
+        convert => { "[mongodb][duration_ms]" => "integer" }
+      }
     }
 
     if [log.level] in ["error", "fatal"] {
@@ -374,6 +388,142 @@ filter {
     }
   }
 
+  # -------------------------------------------------------
+  # Redis server logs
+  # Format: PID:ROLE DD Mon YYYY HH:MM:SS.mmm LEVEL message
+  # ROLE: M=master  S=replica  C=child
+  # LEVEL: * notice  # warning  - verbose  . debug
+  # -------------------------------------------------------
+  if [app] == "redis" {
+
+    grok {
+      match => {
+        "message" => "(?<redis_pid>\d+):(?<redis_role>[A-Z]) (?<redis_ts>\d{1,2} \w{3} \d{4} \d{2}:\d{2}:\d{2}\.\d{3}) (?<redis_level>[.*#\-]) (?<redis_msg>.+)"
+      }
+    }
+
+    # Normalize level char to readable name — stored as log.level for consistency
+    # with every other component in this pipeline (Platform, Gateway, MongoDB, etcd)
+    if [redis_level] == "#" {
+      mutate { add_field => { "log.level" => "warning" } }
+    } else if [redis_level] == "*" {
+      mutate { add_field => { "log.level" => "notice" } }
+    } else if [redis_level] == "-" {
+      mutate { add_field => { "log.level" => "verbose" } }
+    } else if [redis_level] == "." {
+      mutate { add_field => { "log.level" => "debug" } }
+    }
+
+    # Normalize role char to readable name
+    if [redis_role] == "M" {
+      mutate { replace => { "redis_role" => "master" } }
+    } else if [redis_role] == "S" {
+      mutate { replace => { "redis_role" => "replica" } }
+    } else if [redis_role] == "C" {
+      mutate { replace => { "redis_role" => "child" } }
+    }
+
+    date {
+      match        => ["redis_ts", "dd MMM yyyy HH:mm:ss.SSS"]
+      timezone     => "{{ logstash_redis_log_timezone }}"
+      target       => "@timestamp"
+      remove_field => ["redis_ts", "redis_level"]
+    }
+
+    # Tag replication events
+    if [redis_msg] =~ /(?i)(SYNC|PSYNC|partial resync|full resync|replica|replication|connected to master|master<->replica)/ {
+      mutate { add_tag => ["redis_replication"] }
+    }
+
+    # Tag persistence events
+    if [redis_msg] =~ /(?i)(AOF|RDB|BGSAVE|BGREWRITEAOF|rewrite|background saving|DB saved on disk|background append only)/ {
+      mutate { add_tag => ["redis_persistence"] }
+    }
+
+    # Tag memory pressure
+    if [redis_msg] =~ /(?i)(out of memory|OOM|maxmemory|[Ee]vict)/ {
+      mutate { add_tag => ["redis_memory_pressure"] }
+    }
+
+    # Tag connection events
+    if [redis_msg] =~ /(?i)(max number of clients|connection refused|connection reset|Too many)/ {
+      mutate { add_tag => ["redis_connection_event"] }
+    }
+
+    # Tag lifecycle events
+    if [redis_msg] =~ /(?i)(Ready to accept connections|User requested shutdown|Server initialized|Saving the final RDB)/ {
+      mutate { add_tag => ["redis_lifecycle"] }
+    }
+
+    if [log.level] == "warning" {
+      mutate { add_tag => ["redis_error"] }
+    }
+
+    mutate {
+      rename => { "redis_msg" => "message" }
+    }
+  }
+
+  # -------------------------------------------------------
+  # Redis Sentinel logs — same format, role always X
+  # -------------------------------------------------------
+  if [app] == "redis-sentinel" {
+
+    grok {
+      match => {
+        "message" => "(?<redis_pid>\d+):(?<redis_role>[A-Z]) (?<redis_ts>\d{1,2} \w{3} \d{4} \d{2}:\d{2}:\d{2}\.\d{3}) (?<redis_level>[.*#\-]) (?<redis_msg>.+)"
+      }
+    }
+
+    if [redis_level] == "#" {
+      mutate { add_field => { "log.level" => "warning" } }
+    } else if [redis_level] == "*" {
+      mutate { add_field => { "log.level" => "notice" } }
+    } else if [redis_level] == "-" {
+      mutate { add_field => { "log.level" => "verbose" } }
+    } else if [redis_level] == "." {
+      mutate { add_field => { "log.level" => "debug" } }
+    }
+
+    if [redis_role] == "X" {
+      mutate { replace => { "redis_role" => "sentinel" } }
+    }
+
+    date {
+      match        => ["redis_ts", "dd MMM yyyy HH:mm:ss.SSS"]
+      timezone     => "{{ logstash_redis_log_timezone }}"
+      target       => "@timestamp"
+      remove_field => ["redis_ts", "redis_level"]
+    }
+
+    # Tag failover events
+    if [redis_msg] =~ /(?i)(switch-master|failover|elected-leader|new epoch|Sentinel agreed)/ {
+      mutate { add_tag => ["sentinel_failover"] }
+    }
+
+    # Tag instance state changes
+    if [redis_msg] =~ /\+(sdown|odown)|\-(sdown|odown)/ {
+      mutate { add_tag => ["sentinel_state_change"] }
+    }
+
+    # Extract old→new master IPs from switch-master events
+    if [redis_msg] =~ /switch-master/ {
+      grok {
+        match => {
+          "redis_msg" => "switch-master %{WORD:sentinel_master_name} %{IP:sentinel_old_master_ip} %{INT:sentinel_old_master_port} %{IP:sentinel_new_master_ip} %{INT:sentinel_new_master_port}"
+        }
+      }
+    }
+
+    if [log.level] == "warning" {
+      mutate { add_tag => ["redis_error"] }
+    }
+
+    mutate {
+      rename => { "redis_msg" => "message" }
+    }
+  }
+
   # Syslog
   if [app] == "syslog" {
     grok {
@@ -381,6 +531,7 @@ filter {
     }
     date {
       match        => ["syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss"]
+      timezone     => "{{ logstash_syslog_timezone }}"
       target       => "@timestamp"
       remove_field => ["syslog_timestamp"]
     }
@@ -426,4 +577,19 @@ output {
     ssl_certificate_authorities => ["{{ logstash_tls_ca_cert_dest }}"]
 {% endif %}
   }
+{% if logstash_loki_enabled | bool %}
+{% for loki_app in logstash_loki_apps %}
+
+  # {{ loki_app }} logs → Loki
+  if [app] == "{{ loki_app }}" {
+    loki {
+      url            => "{{ logstash_loki_url }}"
+      message_field  => "message"
+      include_fields => ["app", "environment", "hostname"]
+      batch_size     => {{ logstash_loki_batch_size }}
+      batch_wait     => {{ logstash_loki_batch_wait }}
+    }
+  }
+{% endfor %}
+{% endif %}
 }

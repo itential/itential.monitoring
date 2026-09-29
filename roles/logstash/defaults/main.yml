@@ -39,6 +39,23 @@ logstash_tls_ca_cert_dest: "{{ logstash_tls_dest_dir }}/{{ logstash_tls_ca_cert_
 logstash_elasticsearch_hosts:
   - "https://localhost:9200"
 
+# Timezone Redis/Sentinel log timestamps are recorded in (they carry no UTC offset)
+logstash_redis_log_timezone: "UTC"
+
+# Timezone syslog timestamps are recorded in (they carry no UTC offset)
+logstash_syslog_timezone: "UTC"
+
+# Loki output (optional) — ships select app logs to Grafana Loki in addition to Elasticsearch
+logstash_loki_enabled: false
+logstash_loki_url: "http://localhost:3100/loki/api/v1/push"
+logstash_loki_apps:
+  - mongodb
+  - redis
+  - redis-sentinel
+  - itential-gateway-server
+logstash_loki_batch_size: 102400
+logstash_loki_batch_wait: 0.5
+
 # Keystore password — must be overridden (use Ansible Vault); empty passwords are not allowed in Logstash 8+
 logstash_keystore_password: ""
 
