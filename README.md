@@ -270,6 +270,20 @@ All Prometheus variables are handled by the `prometheus.prometheus.prometheus` r
 All exporter variables are handled by the exporter roles. Refer to the documentation links in the
 [Exporter Roles](#exporter-roles) section.
 
+### Process Exporter Additional Flags
+
+The `prometheus.prometheus.process_exporter` role does not expose every flag supported by the
+[process-exporter](https://github.com/ncabatoff/process-exporter) binary itself. `itential.monitoring`
+adds the following optional variables to set four of those flags; none are set by default, and leaving
+all of them unset reproduces the role's own unmodified output exactly.
+
+| Variable | Type | Description | Default Value |
+| :------- | :--- | :---------- | :------------ |
+| `process_exporter_recheck` | Boolean | Sets `--recheck`. Rechecks process names/cmdlines on each scrape instead of caching them, at a CPU cost. | unset |
+| `process_exporter_children` | Boolean | Sets `--children`. Counts resources of a process group's children once the children have exited. | unset |
+| `process_exporter_threads` | Boolean | Sets `--threads`. Reports thread-level metrics in addition to process-level metrics. | unset |
+| `process_exporter_gather_smaps` | Boolean | Sets `--gather-smaps`. Gathers additional memory stats from `/proc/<pid>/smaps`, at a CPU cost. | unset |
+
 ### Redis Exporter Requirements
 
 In order for the Redis exporter to function, the `redis_monitor_user_enabled` variable on the

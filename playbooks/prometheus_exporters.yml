@@ -119,3 +119,23 @@
             - ansible_facts.services["firewalld.service"] is defined
             - ansible_facts.services["firewalld.service"].state == "running"
             - ansible_facts.services["firewalld.service"].status == "enabled"
+
+        # prometheus.prometheus.process_exporter does not support the
+        # --recheck, --children, --threads, or --gather-smaps flags, so a
+        # forked copy of its systemd unit template (with these four added)
+        # overwrites what the role generated. Only runs, and only adds the
+        # flags, that are actually set - leaving none of them set reproduces
+        # today's upstream-generated file exactly.
+        - name: Add process exporter flags not supported by the community role
+          when: >-
+            process_exporter_recheck is defined or
+            process_exporter_children is defined or
+            process_exporter_threads is defined or
+            process_exporter_gather_smaps is defined
+          notify: Restart process_exporter
+          ansible.builtin.template:
+            src: process_exporter.service.j2
+            dest: /etc/systemd/system/process_exporter.service
+            owner: root
+            group: root
+            mode: "0644"
